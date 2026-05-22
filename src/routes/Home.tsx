@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function Home() {
   return (
     <main className="max-w-4xl mx-auto px-5 pb-16 pt-12">
@@ -26,8 +28,8 @@ export default function Home() {
               Generador de campos de batalla para Warmaster Revolution.
             </p>
           </a>
-          <a
-            href="/tools/greathelm-cards/"
+          <Link
+            to="/tools/greathelm-cards"
             className="block bg-panel border border-accent/20 rounded-lg p-5 no-underline text-inherit hover:border-accent hover:bg-panel-2 hover:-translate-y-0.5 transition"
           >
             <h3 className="text-accent text-lg mb-1.5 font-semibold">
@@ -36,7 +38,7 @@ export default function Home() {
             <p className="text-muted text-sm m-0">
               Generador de cartas de unidades para Greathelm.
             </p>
-          </a>
+          </Link>
         </div>
       </section>
     </main>

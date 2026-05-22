@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 export default function Navbar() {
   return (
@@ -16,12 +16,12 @@ export default function Navbar() {
         >
           Warmaster Maps
         </a>
-        <a
-          href="/tools/greathelm-cards/"
+        <Link
+          to="/tools/greathelm-cards"
           className="text-ink hover:bg-accent/15 hover:text-accent rounded px-2.5 py-1.5 no-underline"
         >
           Greathelm Cards
-        </a>
+        </Link>
       </div>
     </nav>
   )
