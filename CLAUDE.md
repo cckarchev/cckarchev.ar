@@ -1,15 +1,17 @@
 # CLAUDE.md
 
-Instrucciones para Claude Code cuando trabaja en este repositorio.
+Instructions for Claude Code when working in this repository.
 
-## Autoría de commits
+## Commit authorship
 
-Nunca te incluyas como autor ni co-autor. El autor de cada commit siempre debe ser el humano que pidió el cambio. No agregues líneas `Co-Authored-By: Claude` ni similares en los mensajes de commit.
+Never list yourself as the author or co-author of a commit. The author of each commit must always be the human who requested the change. Do not add `Co-Authored-By: Claude` lines (or any other Claude attribution) to commit messages.
 
-Si no estás seguro de qué identidad usar, revisá `git log` para ver qué autores ya aparecen en la historia del repositorio y preguntá si todavía hay dudas.
+If you are unsure which identity to use, check `git log` to see which authors already appear in the repository's history, and ask if there is still doubt.
 
-## Idioma
+## Language
 
-Usá español rioplatense para mensajes de commit, comentarios, documentación y comunicación con el usuario en general. Registro neutro y claro — sin slang y sin exageraciones.
+- **Source code, identifiers, and code comments**: English.
+- **User-facing text** (page copy, UI labels, anything rendered in the browser for visitors): Argentinian Spanish (rioplatense). Neutral and clear — no slang, no exaggeration.
+- **Git commit messages**: Argentinian Spanish, matching the existing lowercase, conversational style visible in `git log`.
 
-Excepción: no traduzcas términos específicos de un dominio cuando la fuente original esté en inglés. Por ejemplo, nombres de juegos (Warmaster, Greathelm), nombres de reglas, tipos de unidades, escenarios, etc. — mantenelos en inglés para no romper el vocabulario establecido del juego o de la comunidad.
+Across all of the above, do **not** translate domain-specific terms that originate in English. Game names (Warmaster, Greathelm), rule names, unit types, scenario names, and similar terminology stay in English to preserve the established vocabulary used by the club and the wider community.
