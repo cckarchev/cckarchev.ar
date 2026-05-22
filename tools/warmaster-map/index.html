@@ -399,8 +399,44 @@
       svg { min-width: 0; }
     }
   </style>
+
+  <!-- CCK navbar — keep in sync across: index.html, tools/*/index.html -->
+  <style>
+    .cck-nav {
+      position: sticky; top: 0; z-index: 1000;
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 1.25rem;
+      padding: 0.6rem 1rem;
+      background: #160f0a;
+      border-bottom: 1px solid rgba(212, 170, 82, 0.35);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 0.95rem;
+      color: #f6ecd2;
+    }
+    .cck-nav-brand {
+      font-weight: 700; letter-spacing: 0.06em;
+      color: #d4aa52; text-decoration: none;
+    }
+    .cck-nav-brand:hover { color: #f6ecd2; }
+    .cck-nav-links { display: flex; gap: 0.5rem; margin-left: auto; flex-wrap: wrap; }
+    .cck-nav-links a {
+      color: #f6ecd2; text-decoration: none;
+      padding: 0.3rem 0.6rem; border-radius: 4px;
+    }
+    .cck-nav-links a:hover { background: rgba(212, 170, 82, 0.15); color: #d4aa52; }
+    .cck-nav-links a[aria-current="page"] { color: #d4aa52; background: rgba(212, 170, 82, 0.1); }
+  </style>
 </head>
 <body>
+  <!-- CCK navbar — keep in sync across: index.html, tools/*/index.html -->
+  <nav class="cck-nav">
+    <a class="cck-nav-brand" href="/">CCK</a>
+    <div class="cck-nav-links">
+      <a href="/tools/warmaster-map/" aria-current="page">Warmaster Maps</a>
+      <a href="/tools/greathelm-cards/">Greathelm Cards</a>
+    </div>
+  </nav>
+
   <header>
     <h1>Warmaster Map Generator</h1>
     <div class="subtitle">
