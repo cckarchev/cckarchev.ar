@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Warmaster Revolution Map Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --bg: #160f0a;
+      --panel: #2a1712;
+      --panel-2: #3b2118;
+      --ink: #f6ecd2;
+      --muted: #d1b889;
+      --accent: #d4aa52;
+      --danger: #9e2f22;
+      --line: rgba(255,221,160,.22);
+      --paper: #f3ead5;
+      --paper-ink: #201a12;
+      --red: #7e1e16;
+      --gold: #d4aa52;
+      --iron: #4b4640;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-width: 0; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(177, 36, 22, .28), transparent 34%),
+        radial-gradient(circle at top, #3b2418 0%, var(--bg) 50%, #080605 100%);
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      min-height: 100vh;
+      min-width: 0;
+      overflow-x: hidden;
+    }
+
+    header {
+      padding: 26px 30px 14px;
+      border-bottom: 2px ridge rgba(245,205,119,.36);
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.5), rgba(90,22,16,.28), rgba(0,0,0,.5)),
+        repeating-linear-gradient(45deg, rgba(255,255,255,.025) 0 2px, transparent 2px 7px);
+    }
+
+    h1, h2, h3 { margin: 0; line-height: 1.15; }
+
+    h1 {
+      font-size: clamp(26px, 4vw, 48px);
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: #f8e7a8;
+      text-shadow: 0 3px 0 #000, 0 0 16px rgba(180,35,20,.55);
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: var(--muted);
+      max-width: 1040px;
+      font-size: clamp(13px, 1.6vw, 15px);
+      line-height: 1.35;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      align-items: start;
+      width: 100%;
+      max-width: 1800px;
+      margin: 0 auto;
+      min-width: 0;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,228,160,.07), rgba(0,0,0,.08)), var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.36), inset 0 0 0 1px rgba(255,220,140,.08);
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .controls {
+      position: sticky;
+      top: 12px;
+      max-height: calc(100vh - 24px);
+      overflow: auto;
+      scrollbar-width: thin;
+    }
+
+    .panel-head {
+      padding: 16px 18px;
+      background: linear-gradient(90deg, rgba(105,25,18,.72), rgba(35,15,10,.88));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-head h2 {
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #f8e7a8;
+      font-size: clamp(17px, 2vw, 21px);
+    }
+
+    .panel-body { padding: 16px 18px; }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      color: #f5dd9c;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    select, input[type="number"], input[type="text"] {
+      width: 100%;
+      max-width: 100%;
+      padding: 10px 11px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,221,160,.28);
+      background: #170f0b;
+      color: var(--ink);
+      font-size: 14px;
+      outline: none;
+      min-width: 0;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin: 12px 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .checkbox-row input { margin-top: 2px; flex: 0 0 auto; }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #17130d;
+      background: linear-gradient(#f4d98e, #b98228);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.38), 0 4px 12px rgba(0,0,0,.28);
+      transition: transform .08s ease, filter .2s ease;
+      font-family: Georgia, "Times New Roman", serif;
+      width: 100%;
+    }
+
+    button:hover { filter: brightness(1.06); }
+    button:active { transform: translateY(1px); }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .secondary { background: linear-gradient(#d7d1c1, #918b7e); }
+    .danger { background: linear-gradient(#e99a78, #bd5739); }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      margin-top: 12px;
+    }
+
+    .maps-wrap {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .map-card {
+      background: var(--paper);
+      color: var(--paper-ink);
+      border-radius: 18px;
+      border: 1px solid #d4c29d;
+      overflow: hidden;
+      box-shadow: 0 18px 35px rgba(0,0,0,.3);
+      min-width: 0;
+    }
+
+    .map-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 16px;
+      border-bottom: 1px solid #d0bd91;
+      background:
+        linear-gradient(#fff4d8, #e6d0a5),
+        repeating-linear-gradient(45deg, transparent 0 8px, rgba(80,40,20,.06) 8px 10px);
+    }
+
+    .map-title {
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      overflow-wrap: anywhere;
+    }
+
+    .map-meta {
+      font-size: 12px;
+      text-align: right;
+      line-height: 1.4;
+      color: #59472c;
+      overflow-wrap: anywhere;
+    }
+
+    .map-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 350px);
+      gap: 14px;
+      padding: 14px;
+      align-items: start;
+      min-width: 0;
+    }
+
+    .svg-shell {
+      width: 100%;
+      background: #d6c28f;
+      border: 2px solid #6a4e28;
+      border-radius: 10px;
+      padding: 8px;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-width: 420px;
+    }
+
+    .legend-box {
+      border: 1px solid #c7ae7b;
+      border-radius: 12px;
+      background: rgba(255,255,255,.38);
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .legend-box h3 {
+      padding: 10px 12px;
+      background: rgba(90,65,30,.12);
+      border-bottom: 1px solid #c7ae7b;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .legend-list {
+      padding: 10px 12px;
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .terrain-item {
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr);
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1.3;
+      min-width: 0;
+    }
+
+    .swatch {
+      width: 22px;
+      height: 18px;
+      border-radius: 5px;
+      border: 1px solid rgba(0,0,0,.35);
+      margin-top: 1px;
+    }
+
+    .codes {
+      font-weight: normal;
+      color: #77592f;
+      font-size: 11px;
+    }
+
+    .scenario-note {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(128, 81, 33, .10);
+      border: 1px solid #c7ae7b;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 5px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.12);
+      margin: 2px 2px 0 0;
+      white-space: nowrap;
+    }
+
+    .export-tools {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 12px;
+    }
+
+    .footer-note {
+      color: #7a5f35;
+      font-size: 11px;
+      margin-top: 8px;
+      line-height: 1.3;
+    }
+
+    @media (max-width: 1200px) {
+      main { grid-template-columns: 320px minmax(0, 1fr); }
+      .map-body { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 900px) {
+      header { padding: 20px 16px 12px; }
+      main {
+        grid-template-columns: 1fr;
+        padding: 12px;
+      }
+      .controls {
+        position: static;
+        max-height: none;
+        overflow: visible;
+      }
+      .panel-body { padding: 14px; }
+      .map-body { grid-template-columns: 1fr; padding: 10px; }
+      .map-card-header {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .map-meta { text-align: left; }
+      .legend-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 26px; }
+      .subtitle { font-size: 13px; }
+      main { padding: 8px; gap: 10px; }
+      .panel, .map-card { border-radius: 12px; }
+      .row, .button-grid { grid-template-columns: 1fr; }
+      label { margin-top: 10px; }
+      select, input[type="number"], input[type="text"], button {
+        min-height: 44px;
+        font-size: 15px;
+      }
+      .checkbox-row { font-size: 12px; }
+      .map-card-header { padding: 10px 12px; }
+      .svg-shell { padding: 6px; }
+      svg { min-width: 560px; }
+      .legend-list { grid-template-columns: 1fr; }
+      .terrain-item { font-size: 11px; }
+      .scenario-note { font-size: 11px; }
+    }
+
+    @media (max-width: 420px) {
+      svg { min-width: 620px; }
+      .svg-shell::before {
+        content: "Scroll map sideways to inspect details";
+        display: block;
+        color: #5f4527;
+        font-size: 11px;
+        margin: 0 0 5px;
+      }
+    }
+
+    @media print {
+      body { background: white; color: black; }
+      header, .controls { display: none !important; }
+      main { display: block; padding: 0; max-width: none; }
+      .map-card { page-break-inside: avoid; box-shadow: none; border-radius: 0; }
+      .svg-shell { overflow: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Warmaster Map Generator</h1>
+    <div class="subtitle">
+      Rule-aware 2D battlefield generator for Warmaster Revolution. Generates fair, readable Old World battlefields with clear footprints, mission markers, deployment zones, water crossings, and a printable terrain reference.
+    </div>
+  </header>
+
+  <main>
+    <section class="panel controls">
+      <div class="panel-head">
+        <h2>Battlefield Setup</h2>
+      </div>
+      <div class="panel-body">
+        <label for="tableSize">Table size</label>
+        <select id="tableSize">
+          <option value="90x90">90 × 90 cm / 3 × 3 ft</option>
+          <option value="120x120">120 × 120 cm / 4 × 4 ft</option>
+          <option value="150x120">120 × 150 cm / 4 × 5 ft</option>
+          <option value="180x120" selected>120 × 180 cm / 4 × 6 ft</option>
+        </select>
+
+        <label for="theme">Theme</label>
+        <select id="theme">
+          <option value="imperial" selected>Imperial / Human lands</option>
+          <option value="wildlands">Forest / Wildlands</option>
+          <option value="chaos">Chaos lands</option>
+          <option value="jungle">Jungle / Lustria</option>
+          <option value="desert">Desert / Araby / Nehekhara</option>
+        </select>
+
+        <label for="mission">Mission</label>
+        <select id="mission">
+          <option value="agnostic" selected>Mission agnostic / Pitched battle</option>
+          <option value="takeHold">Take and Hold</option>
+          <option value="tower">Battle for the Tower</option>
+          <option value="village">Defending the Village</option>
+          <option value="wagon">Wagon Train</option>
+          <option value="breach">Siege: Into the Breach</option>
+          <option value="watchtower">Siege: The Watchtower</option>
+        </select>
+
+        <div class="row">
+          <div>
+            <label for="density">Terrain density</label>
+            <select id="density">
+              <option value="light">Light</option>
+              <option value="standard" selected>Standard</option>
+              <option value="dense">Dense</option>
+            </select>
+          </div>
+          <div>
+            <label for="mapsCount">Maps</label>
+            <input id="mapsCount" type="number" min="1" max="12" value="1" />
+          </div>
+        </div>
+
+        <label for="playStyle">Table style</label>
+        <select id="playStyle">
+          <option value="clear" selected>Battle report / clear play</option>
+          <option value="competitive">Tournament / competitive</option>
+          <option value="narrative">Narrative / scenic</option>
+        </select>
+
+        <label for="waterRarity">Water features</label>
+        <select id="waterRarity">
+          <option value="rare" selected>Rare / only when useful</option>
+          <option value="normal">Normal</option>
+          <option value="none">No rivers or streams</option>
+          <option value="scenic">Scenic / more likely</option>
+        </select>
+
+        <label for="seed">Seed</label>
+        <input id="seed" type="text" placeholder="Leave empty for random" />
+
+        <div class="checkbox-row">
+          <input id="fairMode" type="checkbox" checked />
+          <span><strong>Competitive balance mode:</strong> uses semi-symmetrical placement, preserves cavalry lanes, avoids deployment traps, and applies mission exclusion zones.</span>
+        </div>
+
+        <div class="checkbox-row">
+          <input id="showGrid" type="checkbox" checked />
+          <span>Show 10 cm grid and scale marks.</span>
+        </div>
+
+        <div class="checkbox-row">
+          <input id="showObjectiveOverlay" type="checkbox" checked />
+          <span>Show objective validation overlay when relevant: 10 cm grid, objective zones, 5 cm terrain buffer and 30 cm spacing guides.</span>
+        </div>
+
+        <div class="button-grid">
+          <button id="generateBtn">Generate</button>
+          <button id="rerollBtn" class="secondary">Reroll Seed</button>
+        </div>
+
+        <div class="export-tools">
+          <label for="pdfMode">PDF export mode</label>
+          <select id="pdfMode">
+            <option value="onePage">Put all maps on one PDF page if possible</option>
+            <option value="separate">Each map on a separate PDF page</option>
+          </select>
+          <button id="exportBtn">Export PDF</button>
+        </div>
+
+        <div class="small-note">
+          Terrain uses Warmaster Revolution assumptions: clear footprints first, rules tags second. The default style follows clean battle-report logic: readable terrain, preserved battlelines, subtle roads, rare water, and objectives validated against the 10 cm grid.
+        </div>
+      </div>
+    </section>
+
+    <section class="maps-wrap" id="mapsWrap"></section>
+  </main>
+
+  <script>
+    const TERRAIN_RULES = {
+      hill: {
+        name: "Hill / Slope",
+        color: "#b48b54",
+        tags: ["passable", "blocks LoS", "defended if higher"],
+        rules: "Passable. Blocks line of sight. Infantry and artillery on higher ground count as defended against chargers or shooters from lower positions."
+      },
+      wood: {
+        name: "Wood / Tall Scrub",
+        color: "#587b3d",
+        tags: ["difficult", "dense", "2 cm visibility"],
+        rules: "Difficult and dense. Usually infantry-friendly. Visibility is 2 cm. Dense terrain gives a -1 Command penalty."
+      },
+      denseForest: {
+        name: "Dense Forest",
+        color: "#314d2c",
+        tags: ["difficult", "dense", "broken", "2 cm visibility"],
+        rules: "Difficult, dense and broken. Visibility is 2 cm. Strong infantry terrain; very restrictive for mounted troops."
+      },
+      rough: {
+        name: "Rough Ground / Fields",
+        color: "#b69b60",
+        tags: ["rough", "no charge bonus"],
+        rules: "Rough terrain. Accessible to infantry, cavalry and monsters. Units charging from or into it do not receive charge bonuses."
+      },
+      marsh: {
+        name: "Marsh / Dunes",
+        color: "#7c8f67",
+        tags: ["rough", "dense"],
+        rules: "Rough and dense. Hinders charges and gives a -1 Command penalty."
+      },
+      village: {
+        name: "Village / Built-up Area",
+        color: "#9a8f7b",
+        tags: ["passable", "dense", "broken", "2 cm visibility", "defended"],
+        rules: "Passable, dense and broken. Infantry and artillery count as defended within. Visibility is 2 cm. Treat the footprint as the terrain, not individual buildings."
+      },
+      ruin: {
+        name: "Ruins / Shrine",
+        color: "#8f8674",
+        tags: ["dense", "blocks LoS", "defended"],
+        rules: "Dense feature that normally blocks line of sight. Infantry and artillery can count as defended in or behind it."
+      },
+      river: {
+        name: "River / Deep Water",
+        color: "#4f8ba8",
+        tags: ["border-to-border", "impassable", "crossings required"],
+        rules: "Generated from one table edge to another, or into a lake. Impassable except at marked bridges or fords. Does not block line of sight."
+      },
+      stream: {
+        name: "Shallow Stream",
+        color: "#73aebe",
+        tags: ["edge-to-edge", "rough", "dense", "crossings required"],
+        rules: "Generated as a narrow winding line from one table edge to another, or into a lake. Rough, dense and broken. Use marked crossings when treated as a substantial watercourse."
+      },
+      crossing: {
+        name: "Bridge / Ford Crossing",
+        color: "#7a4f2a",
+        tags: ["crossing", "passable", "scenario-safe"],
+        rules: "Marked crossing point over a river, stream or large water body. Keeps water features playable and prevents a single water feature from sealing the battlefield."
+      },
+      lake: {
+        name: "Lake / Water Body",
+        color: "#3f7896",
+        tags: ["water body", "impassable", "edge source"],
+        rules: "Large water body. Usually impassable. Rivers and streams may start or end here instead of at a table edge."
+      },
+      road: {
+        name: "Road / Track",
+        color: "#8b6b43",
+        tags: ["passable", "column bonus"],
+        rules: "Passable. A non-flying unit moving full distance in column along a road may gain an extra half-pace move and +1 Command for a following order."
+      },
+      obstacle: {
+        name: "Low Wall / Hedge / Fence",
+        color: "#6d604d",
+        tags: ["linear", "defended", "no LoS block", "sectioned"],
+        rules: "Low linear obstacle. Impassable to chariots, artillery and machines. Infantry and artillery behind it count as defended. Crosses and corners are generated as sensible connected sections, not as overlapping solid blocks."
+      },
+      impassable: {
+        name: "Rock / Cliff / Monolith",
+        color: "#6f6a64",
+        tags: ["impassable", "blocks LoS"],
+        rules: "Impassable feature that blocks line of sight. Use sparingly in competitive layouts."
+      },
+      objective: {
+        name: "Objective Marker",
+        color: "#d8b64d",
+        tags: ["mission"],
+        rules: "Mission marker. It is not terrain unless both players agree. Keep distance restrictions shown by the mission."
+      },
+      tower: {
+        name: "Tower / Watchtower",
+        color: "#6b5a42",
+        tags: ["mission", "impassable", "blocks LoS"],
+        rules: "Mission feature. Battle for the Tower uses a central impassable tower with no terrain within 20 cm."
+      },
+      wagon: {
+        name: "Wagon / Train Marker",
+        color: "#9b6234",
+        tags: ["mission", "road"],
+        rules: "Mission marker for Wagon Train style scenarios. Place along a clear road or track corridor."
+      },
+      fortress: {
+        name: "Fortress Wall / Breach",
+        color: "#5d5a55",
+        tags: ["fortified", "siege", "blocks LoS"],
+        rules: "Siege feature. Fortified positions use the siege rules and should be generated only for siege missions."
+      }
+    };
+
+    const THEMES = {
+      imperial: {
+        label: "Imperial / Human lands",
+        bg: "#cdbb89",
+        palette: ["hill", "wood", "rough", "village", "road", "obstacle", "stream", "ruin"],
+        required: []
+      },
+      wildlands: {
+        label: "Forest / Wildlands",
+        bg: "#b7c18a",
+        palette: ["wood", "wood", "denseForest", "hill", "stream", "rough", "marsh", "ruin"],
+        required: []
+      },
+      chaos: {
+        label: "Chaos lands",
+        bg: "#b69a88",
+        palette: ["hill", "rough", "marsh", "impassable", "ruin", "stream", "obstacle", "wood"],
+        required: []
+      },
+      jungle: {
+        label: "Jungle / Lustria",
+        bg: "#a9b977",
+        palette: ["denseForest", "wood", "wood", "marsh", "stream", "ruin", "hill", "impassable"],
+        required: []
+      },
+      desert: {
+        label: "Desert / Araby / Nehekhara",
+        bg: "#d4b978",
+        palette: ["rough", "rough", "hill", "impassable", "ruin", "obstacle", "road", "village"],
+        required: []
+      }
+    };
+
+    const MISSIONS = {
+      agnostic: {
+        label: "Mission agnostic / Pitched battle",
+        note: "Balanced general-purpose field. Keeps open maneuver lanes, gives each half an infantry-friendly defended area, and avoids overloading deployment zones."
+      },
+      takeHold: {
+        label: "Take and Hold",
+        note: "Places four objectives: two near the central line and one in each outer objective zone. Objectives are kept at least 5 cm from terrain and approximately 30 cm apart."
+      },
+      tower: {
+        label: "Battle for the Tower",
+        note: "Places an impassable tower in the exact center. Terrain is excluded within 20 cm of the tower."
+      },
+      village: {
+        label: "Defending the Village",
+        note: "Creates a central or near-central village objective with supporting roads and surrounding terrain. Designed to make infantry positions important without sealing the board."
+      },
+      wagon: {
+        label: "Wagon Train",
+        note: "Creates a road corridor with wagon markers and flanking terrain. Keeps the road playable and avoids blocking the convoy route."
+      },
+      breach: {
+        label: "Siege: Into the Breach",
+        note: "Creates a fortress edge with a breach lane and attacker approach. This is a specialized siege layout rather than a normal competitive field."
+      },
+      watchtower: {
+        label: "Siege: The Watchtower",
+        note: "Places a watchtower at the center with attacker and relief-force approach zones. Maintains a clear attack lane around the tower."
+      }
+    };
+
+    const state = { maps: [] };
+
+    function xmur3(str) {
+      let h = 1779033703 ^ str.length;
+      for (let i = 0; i < str.length; i++) {
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+        h = (h << 13) | (h >>> 19);
+      }
+      return function() {
+        h = Math.imul(h ^ (h >>> 16), 2246822507);
+        h = Math.imul(h ^ (h >>> 13), 3266489909);
+        return (h ^= h >>> 16) >>> 0;
+      };
+    }
+
+    function mulberry32(a) {
+      return function() {
+        let t = (a += 0x6D2B79F5);
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function rngFromSeed(seed) {
+      const seedFn = xmur3(seed);
+      return mulberry32(seedFn());
+    }
+
+    function randBetween(rng, min, max) { return min + (max - min) * rng(); }
+    function choice(rng, arr) { return arr[Math.floor(rng() * arr.length)]; }
+
+    function parseSize(value) {
+      const [w, h] = value.split("x").map(Number);
+      return { w, h };
+    }
+
+    function deploymentDepth(table) {
+      if (table.h >= 120) return 20;
+      return Math.max(10, Math.floor((table.h - 60) / 2));
+    }
+
+    function terrainCount(table, density, mission) {
+      const area = table.w * table.h;
+      const style = document.getElementById("playStyle")?.value || "clear";
+      let base = Math.round(area / (180 * 120) * 9);
+      if (density === "light") base -= 2;
+      if (density === "dense") base += 3;
+      if (style === "clear") base -= 1;
+      if (style === "narrative") base += 2;
+      if (["tower", "village", "wagon", "breach", "watchtower"].includes(mission)) base -= 1;
+      return Math.max(5, Math.min(style === "narrative" ? 16 : 12, base));
+    }
+
+    function isWater(type) { return type === "river" || type === "stream"; }
+
+    function terrainSize(type, table, rng) {
+      const scale = Math.sqrt((table.w * table.h) / (180 * 120));
+      const baseW = randBetween(rng, 14, 26) * scale;
+      const baseH = randBetween(rng, 8, 18) * scale;
+      if (["river", "stream"].includes(type)) return { w: table.w + 8, h: type === "river" ? randBetween(rng, 4.5, 7) : randBetween(rng, 2.5, 4.5) };
+      if (type === "road") return { w: table.w * randBetween(rng, .75, 1.15), h: randBetween(rng, 2.5, 5) };
+      if (type === "crossing") return { w: 10, h: 5 };
+      if (type === "lake") return { w: randBetween(rng, 18, 34) * scale, h: randBetween(rng, 12, 24) * scale };
+      if (type === "obstacle") return { w: randBetween(rng, 18, 34) * scale, h: 1.5 };
+      if (type === "village") return { w: randBetween(rng, 18, 30) * scale, h: randBetween(rng, 14, 24) * scale };
+      if (type === "tower") return { w: 7 * scale, h: 7 * scale };
+      if (type === "fortress") return { w: table.w, h: 7 };
+      return { w: baseW, h: baseH };
+    }
+
+    function overlaps(a, b, padding = 3) {
+      return !(a.x + a.w + padding < b.x || b.x + b.w + padding < a.x || a.y + a.h + padding < b.y || b.y + b.h + padding < a.y);
+    }
+
+    function centerDistance(a, b) {
+      const ax = a.x + a.w / 2, ay = a.y + a.h / 2;
+      const bx = b.x + b.w / 2, by = b.y + b.h / 2;
+      return Math.hypot(ax - bx, ay - by);
+    }
+
+    function insideDeployment(item, table, dep) {
+      return item.y < dep || item.y + item.h > table.h - dep;
+    }
+
+    function missionExclusion(item, table, mission) {
+      const cx = table.w / 2, cy = table.h / 2;
+      const itemCenter = { x: item.x + item.w / 2, y: item.y + item.h / 2 };
+      if (["tower", "watchtower"].includes(mission)) {
+        if (Math.hypot(itemCenter.x - cx, itemCenter.y - cy) < 20) return true;
+      }
+      if (mission === "wagon") {
+        const roadBand = table.h / 2;
+        if (Math.abs(itemCenter.y - roadBand) < 8 && !["road", "wagon", "objective", "crossing"].includes(item.type)) return true;
+      }
+      if (mission === "breach") {
+        if (item.y > table.h - 18 && !["fortress", "objective", "road", "crossing"].includes(item.type)) return true;
+      }
+      return false;
+    }
+
+    function isWaterCourseValid(item, table) {
+      if (!["river", "stream"].includes(item.type)) return true;
+      const touchesHorizontalEdges = item.x <= 0.5 && item.x + item.w >= table.w - 0.5;
+      const touchesVerticalEdges = item.y <= 0.5 && item.y + item.h >= table.h - 0.5;
+      return touchesHorizontalEdges || touchesVerticalEdges || item.lakeSource === true;
+    }
+
+    function addItem(items, item, table, mission, fairMode, dep) {
+      const isEdgeWater = ["river", "stream"].includes(item.type);
+      if (!isEdgeWater && (item.x < 1 || item.y < 1 || item.x + item.w > table.w - 1 || item.y + item.h > table.h - 1)) return false;
+      if (missionExclusion(item, table, mission)) return false;
+      if (!isWaterCourseValid(item, table)) return false;
+      if (fairMode && insideDeployment(item, table, dep) && !["road", "river", "stream", "fortress", "crossing"].includes(item.type)) return false;
+      for (const existing of items) {
+        if (["road", "river", "stream", "crossing"].includes(existing.type) || ["road", "river", "stream", "crossing"].includes(item.type)) continue;
+        if (overlaps(item, existing, 4)) return false;
+      }
+      items.push(item);
+      return true;
+    }
+
+    function makeBlobPath(x, y, w, h, rng) {
+      const pts = [];
+      const count = 10;
+      for (let i = 0; i < count; i++) {
+        const a = (Math.PI * 2 * i) / count;
+        const r = .82 + rng() * .35;
+        pts.push([x + w / 2 + Math.cos(a) * w / 2 * r, y + h / 2 + Math.sin(a) * h / 2 * r]);
+      }
+      return "M " + pts.map(p => p.map(n => n.toFixed(2)).join(" ")).join(" L ") + " Z";
+    }
+
+    function generateMap(index, baseSeed) {
+      const table = parseSize(document.getElementById("tableSize").value);
+      const themeKey = document.getElementById("theme").value;
+      const missionKey = document.getElementById("mission").value;
+      const density = document.getElementById("density").value;
+      const playStyle = document.getElementById("playStyle")?.value || "clear";
+      const waterRarity = document.getElementById("waterRarity")?.value || "rare";
+      const fairMode = document.getElementById("fairMode").checked;
+      const seed = `${baseSeed || Date.now()}-${index}-${table.w}x${table.h}-${themeKey}-${missionKey}-${density}-${playStyle}-${waterRarity}`;
+      const rng = rngFromSeed(seed);
+      const theme = THEMES[themeKey];
+      const dep = deploymentDepth(table);
+      const items = [];
+      const objectives = [];
+
+      addMissionRequired(items, objectives, table, missionKey, themeKey, rng, dep);
+      addThemeRequired(items, table, missionKey, theme, rng, dep);
+      addFairTerrain(items, table, missionKey, theme, density, fairMode, rng, dep);
+      addMissionObjectives(items, objectives, table, missionKey, rng, dep);
+
+      return {
+        seed,
+        table,
+        themeKey,
+        missionKey,
+        density,
+        playStyle,
+        waterRarity,
+        fairMode,
+        dep,
+        items,
+        objectives,
+        title: `${MISSIONS[missionKey].label}`,
+        themeLabel: theme.label
+      };
+    }
+
+    function addThemeRequired(items, table, mission, theme, rng, dep) {
+      for (const type of theme.required) {
+        if (type === "road" && !items.some(i => i.type === "road")) {
+          items.push(makeRoad(table, rng, dep, items, "neutral"));
+        }
+      }
+    }
+
+    function addMissionRequired(items, objectives, table, mission, themeKey, rng, dep) {
+      if (mission === "tower" || mission === "watchtower") {
+        const size = mission === "watchtower" ? 10 : 8;
+        items.push({ type: "tower", x: table.w/2 - size/2, y: table.h/2 - size/2, w: size, h: size, label: mission === "watchtower" ? "WT1" : "T1" });
+      }
+
+      if (mission === "village") {
+        const vW = Math.min(34, table.w * .24), vH = Math.min(24, table.h * .22);
+        items.push({ type: "village", x: table.w/2 - vW/2, y: table.h/2 - vH/2, w: vW, h: vH, label: "V1" });
+        items.push(makeRoad(table, rng, dep, items, "village"));
+      }
+
+      if (mission === "wagon") {
+        const road = makeRoad(table, rng, dep, items, "convoy");
+        items.push(road);
+        for (let i = 0; i < 3; i++) {
+          const t = .38 + i * .12;
+          const p = pointOnRoad(road, t);
+          items.push({ type: "wagon", x: p.x - 3, y: p.y - 3, w: 6, h: 6, label: `WG${i + 1}` });
+        }
+      }
+
+      if (mission === "breach") {
+        items.push({ type: "fortress", x: 0, y: table.h - 8, w: table.w, h: 8, label: "FW1" });
+        items.push({ type: "objective", x: table.w/2 - 5, y: table.h - 8.5, w: 10, h: 9, label: "BR1" });
+        items.push(makeRoad(table, rng, dep, items, "approach"));
+      }
+    }
+
+    function addFairTerrain(items, table, mission, theme, density, fairMode, rng, dep) {
+      const target = terrainCount(table, density, mission);
+      const palette = theme.palette;
+      const style = document.getElementById("playStyle")?.value || "clear";
+      const waterRarity = document.getElementById("waterRarity")?.value || "rare";
+      let guard = 0;
+
+      while (items.filter(i => !["objective", "tower", "wagon", "road", "fortress", "crossing"].includes(i.type)).length < target && guard < 900) {
+        guard++;
+        const type = choice(rng, palette);
+        if (mission === "wagon" && isWater(type)) continue;
+        if (mission === "breach" && ["village"].includes(type)) continue;
+
+        if (type === "road") {
+          const hasRoad = items.some(i => i.type === "road");
+          let roadChance = theme.label.includes("Imperial") ? .55 : .24;
+          if (style === "clear") roadChance -= .12;
+          if (style === "narrative") roadChance += .18;
+          if (!hasRoad && rng() < roadChance) items.push(makeRoad(table, rng, dep, items, "neutral"));
+          continue;
+        }
+
+        if (isWater(type)) {
+          const hasWaterCourse = items.some(i => isWater(i.type));
+          if (hasWaterCourse || waterRarity === "none") continue;
+          let waterChance = type === "river" ? .08 : .16;
+          if (waterRarity === "normal") waterChance += .12;
+          if (waterRarity === "scenic") waterChance += .26;
+          if (style === "clear") waterChance -= .05;
+          if (style === "narrative") waterChance += .10;
+          if (density === "dense") waterChance += .06;
+          if (rng() > Math.max(.02, waterChance)) continue;
+          const water = makeWaterCourse(type, table, rng, dep, items);
+          if (addItem(items, water, table, mission, fairMode, dep)) addWaterCrossings(items, water, table, rng);
+          continue;
+        }
+
+        if (type === "obstacle") {
+          const cluster = makeObstacleCluster(table, rng, dep, items);
+          addItem(items, cluster, table, mission, fairMode, dep);
+          continue;
+        }
+
+        const size = terrainSize(type, table, rng);
+        let x = randBetween(rng, 6, table.w - size.w - 6);
+        let y = randBetween(rng, dep + 4, table.h - dep - size.h - 4);
+
+        const mirrorChance = style === "competitive" ? .68 : style === "narrative" ? .32 : .52;
+        if (fairMode && rng() < mirrorChance && !["obstacle", "lake"].includes(type)) {
+          x = randBetween(rng, 8, table.w / 2 - size.w - 4);
+          y = randBetween(rng, dep + 5, table.h - dep - size.h - 5);
+          const a = { type, x, y, w: size.w, h: size.h, angle: randBetween(rng, -22, 22), label: labelFor(type, items) };
+          const mirrored = {
+            type,
+            x: Math.max(6, Math.min(table.w - size.w - 6, table.w - x - size.w + (style === "competitive" ? randBetween(rng, -4, 4) : 0))),
+            y: Math.max(dep + 5, Math.min(table.h - dep - size.h - 5, table.h - y - size.h + (style === "competitive" ? randBetween(rng, -3, 3) : 0))),
+            w: size.w,
+            h: size.h,
+            angle: a.angle + 180,
+            label: labelFor(type, items, 1)
+          };
+          const before = items.length;
+          addItem(items, a, table, mission, fairMode, dep);
+          if (items.length > before) addItem(items, mirrored, table, mission, fairMode, dep);
+        } else {
+          const item = { type, x, y, w: size.w, h: size.h, angle: randBetween(rng, -35, 35), label: labelFor(type, items) };
+          addItem(items, item, table, mission, fairMode, dep);
+        }
+      }
+
+      ensureManeuverLanes(items, table, mission, dep);
+    }
+
+    function makeObstacleCluster(table, rng, dep, items) {
+      const label = labelFor("obstacle", items);
+      const style = document.getElementById("playStyle")?.value || "clear";
+      const pattern = style === "narrative" ? choice(rng, ["straight", "corner", "t", "broken"]) : choice(rng, ["straight", "corner", "broken"]);
+      const cx = randBetween(rng, table.w * .18, table.w * .82);
+      const cy = randBetween(rng, dep + 8, table.h - dep - 8);
+      const base = randBetween(rng, 12, 22) * Math.sqrt((table.w * table.h) / (180 * 120));
+      const thickness = 1.2;
+      const segments = [];
+      const addSeg = (x1, y1, x2, y2) => segments.push({ x1, y1, x2, y2 });
+
+      if (pattern === "straight") {
+        const horizontal = rng() > .35;
+        if (horizontal) addSeg(cx - base, cy, cx + base, cy + randBetween(rng, -2, 2));
+        else addSeg(cx, cy - base * .65, cx + randBetween(rng, -2, 2), cy + base * .65);
+      } else if (pattern === "corner") {
+        addSeg(cx - base * .75, cy, cx, cy);
+        addSeg(cx, cy, cx, cy + base * .65);
+      } else if (pattern === "t") {
+        addSeg(cx - base * .8, cy, cx, cy);
+        addSeg(cx, cy, cx + base * .8, cy);
+        addSeg(cx, cy, cx, cy + base * .65);
+      } else {
+        addSeg(cx - base, cy, cx - base * .25, cy + randBetween(rng, -1.5, 1.5));
+        addSeg(cx + base * .2, cy + randBetween(rng, -1.5, 1.5), cx + base, cy);
+      }
+
+      const xs = segments.flatMap(s => [s.x1, s.x2]);
+      const ys = segments.flatMap(s => [s.y1, s.y2]);
+      const minX = Math.max(1, Math.min(...xs) - thickness);
+      const maxX = Math.min(table.w - 1, Math.max(...xs) + thickness);
+      const minY = Math.max(1, Math.min(...ys) - thickness);
+      const maxY = Math.min(table.h - 1, Math.max(...ys) + thickness);
+      return { type: "obstacle", x: minX, y: minY, w: maxX - minX, h: maxY - minY, label, segments, pattern };
+    }
+
+    function pointOnRoad(road, t) {
+      if (!road.path) return { x: road.x + road.w * t, y: road.y };
+      const p0 = road.path[0], p1 = road.path[1], p2 = road.path[2], p3 = road.path[3];
+      const u = 1 - t;
+      return {
+        x: u*u*u*p0.x + 3*u*u*t*p1.x + 3*u*t*t*p2.x + t*t*t*p3.x,
+        y: u*u*u*p0.y + 3*u*u*t*p1.y + 3*u*t*t*p2.y + t*t*t*p3.y
+      };
+    }
+
+    function makeRoad(table, rng, dep, items, mode = "neutral") {
+      const label = labelFor("road", items);
+      let p0, p3;
+      const sideY = randBetween(rng, dep + 8, table.h - dep - 8);
+      const neutralY = randBetween(rng, dep + 10, table.h - dep - 10);
+
+      if (mode === "convoy") {
+        p0 = { x: -3, y: table.h / 2 + randBetween(rng, -8, 8) };
+        p3 = { x: table.w + 3, y: table.h / 2 + randBetween(rng, -8, 8) };
+      } else if (mode === "village") {
+        if (rng() < .5) {
+          p0 = { x: -3, y: neutralY };
+          p3 = { x: table.w + 3, y: table.h - neutralY };
+        } else {
+          p0 = { x: table.w * .18, y: dep + 4 };
+          p3 = { x: table.w * .82, y: table.h - dep - 4 };
+        }
+      } else if (mode === "approach") {
+        p0 = { x: table.w / 2 + randBetween(rng, -10, 10), y: -3 };
+        p3 = { x: table.w / 2 + randBetween(rng, -8, 8), y: table.h - 8 };
+      } else {
+        const roll = rng();
+        if (roll < .45) {
+          p0 = { x: -3, y: sideY };
+          p3 = { x: table.w + 3, y: randBetween(rng, dep + 8, table.h - dep - 8) };
+        } else if (roll < .7) {
+          p0 = { x: randBetween(rng, table.w * .12, table.w * .35), y: randBetween(rng, dep + 10, table.h - dep - 10) };
+          p3 = { x: randBetween(rng, table.w * .65, table.w * .88), y: randBetween(rng, dep + 10, table.h - dep - 10) };
+        } else {
+          p0 = { x: -3, y: sideY };
+          p3 = { x: randBetween(rng, table.w * .55, table.w * .86), y: randBetween(rng, dep + 10, table.h - dep - 10) };
+        }
+      }
+
+      const anchor = chooseRoadAnchor(items, table, rng, mode);
+      if (anchor && mode === "neutral") {
+        if (rng() < .5) p3 = anchor;
+        else p0 = anchor;
+      }
+      const p1 = { x: p0.x + (p3.x - p0.x) * .33, y: p0.y + randBetween(rng, -12, 12) };
+      const p2 = { x: p0.x + (p3.x - p0.x) * .66, y: p3.y + randBetween(rng, -12, 12) };
+      const minX = Math.min(p0.x, p1.x, p2.x, p3.x);
+      const maxX = Math.max(p0.x, p1.x, p2.x, p3.x);
+      const minY = Math.min(p0.y, p1.y, p2.y, p3.y);
+      const maxY = Math.max(p0.y, p1.y, p2.y, p3.y);
+      return { type: "road", x: minX, y: minY, w: maxX - minX, h: maxY - minY || 3, label, path: [p0, p1, p2, p3] };
+    }
+
+    function chooseRoadAnchor(items, table, rng, mode) {
+      const candidates = items
+        .filter(i => ["village", "ruin", "tower", "crossing", "objective"].includes(i.type))
+        .map(i => ({ x: i.x + i.w / 2, y: i.y + i.h / 2 }));
+      if (!candidates.length || mode !== "neutral") return null;
+      if (rng() > .65) return null;
+      return choice(rng, candidates);
+    }
+
+    function makeWaterCourse(type, table, rng, dep, items) {
+      const horizontal = rng() > .28;
+      const width = type === "river" ? randBetween(rng, 4.5, 6.5) : randBetween(rng, 1.6, 2.8);
+      const label = labelFor(type, items);
+      const margin = 4;
+      if (horizontal) {
+        const y0 = randBetween(rng, dep + 12, table.h - dep - 12);
+        const y3 = randBetween(rng, dep + 12, table.h - dep - 12);
+        const p0 = { x: -margin, y: y0 };
+        const p3 = { x: table.w + margin, y: y3 };
+        const p1 = { x: table.w * .33, y: y0 + randBetween(rng, -10, 10) };
+        const p2 = { x: table.w * .66, y: y3 + randBetween(rng, -10, 10) };
+        return { type, x: -margin, y: Math.min(y0, y3, p1.y, p2.y) - width, w: table.w + margin * 2, h: Math.max(3, Math.abs(y3 - y0) + width * 2 + 20), width, label, waterPath: "horizontal", path: [p0, p1, p2, p3] };
+      }
+      const x0 = randBetween(rng, 18, table.w - 18);
+      const x3 = randBetween(rng, 18, table.w - 18);
+      const p0 = { x: x0, y: -margin };
+      const p3 = { x: x3, y: table.h + margin };
+      const p1 = { x: x0 + randBetween(rng, -10, 10), y: table.h * .33 };
+      const p2 = { x: x3 + randBetween(rng, -10, 10), y: table.h * .66 };
+      return { type, x: Math.min(x0, x3, p1.x, p2.x) - width, y: -margin, w: Math.max(3, Math.abs(x3 - x0) + width * 2 + 20), h: table.h + margin * 2, width, label, waterPath: "vertical", path: [p0, p1, p2, p3] };
+    }
+
+    function addWaterCrossings(items, water, table, rng) {
+      const length = water.waterPath === "vertical" ? table.h : table.w;
+      const crossings = Math.max(1, Math.min(4, Math.floor(length / 70)));
+      for (let i = 0; i < crossings; i++) {
+        const t = (i + 1) / (crossings + 1);
+        const p = pointOnRoad(water, Math.max(.12, Math.min(.88, t + randBetween(rng, -0.04, 0.04))));
+        if (water.waterPath === "vertical") {
+          items.push({ type: "crossing", x: p.x - 7, y: p.y - 2.5, w: 14, h: 5, angle: 90, label: `C${i + 1}` });
+        } else {
+          items.push({ type: "crossing", x: p.x - 6, y: p.y - 2.5, w: 12, h: 5, angle: 0, label: `C${i + 1}` });
+        }
+      }
+    }
+
+    function ensureManeuverLanes(items, table, mission, dep) {
+      if (["breach", "watchtower"].includes(mission)) return;
+      const lanes = [table.w * .25, table.w * .5, table.w * .75];
+      for (const lx of lanes) {
+        const blockers = items.filter(i => !["road", "objective", "wagon", "crossing"].includes(i.type) && i.x < lx && i.x + i.w > lx && i.y > dep && i.y + i.h < table.h - dep);
+        if (blockers.length > 2) blockers.slice(2).forEach(b => { b.x += lx < table.w/2 ? -6 : 6; });
+      }
+    }
+
+    function addMissionObjectives(items, objectives, table, mission, rng, dep) {
+      if (mission === "takeHold") {
+        const centralY = table.h / 2;
+        const zoneB = 15;
+        const topZoneY = dep + Math.max(5, (centralY - zoneB - dep) / 2);
+        const bottomZoneY = table.h - dep - Math.max(5, (centralY - zoneB - dep) / 2);
+        const desired = [
+          { x: table.w * .28, y: centralY - Math.min(6, zoneB * .4), label: "O1", zone: "B" },
+          { x: table.w * .72, y: centralY + Math.min(6, zoneB * .4), label: "O2", zone: "B" },
+          { x: table.w * .50, y: topZoneY, label: "O3", zone: "A" },
+          { x: table.w * .50, y: bottomZoneY, label: "O4", zone: "A" }
+        ];
+        desired.forEach(o => placeObjectiveStrict(items, objectives, table, o, rng, dep));
+      }
+
+      if (mission === "village") placeObjective(items, objectives, table, table.w/2, table.h/2, "OBJ", rng, true);
+    }
+
+    function placeObjectiveStrict(items, objectives, table, desired, rng, dep) {
+      const size = 4;
+      const candidates = [];
+      const minObjectiveGap = Math.min(30, Math.max(24, table.w * .28));
+      const addCandidate = (x, y) => candidates.push({ x: x - size/2, y: y - size/2, w: size, h: size, type: "objective", label: desired.label });
+      addCandidate(desired.x, desired.y);
+      for (let ring = 1; ring <= 5; ring++) {
+        const step = ring * 5;
+        for (const dx of [-step, 0, step]) {
+          for (const dy of [-step, 0, step]) {
+            if (dx || dy) addCandidate(desired.x + dx, desired.y + dy);
+          }
+        }
+      }
+      const legal = candidates.find(obj => {
+        const cy = obj.y + obj.h / 2;
+        if (desired.zone === "B" && Math.abs(cy - table.h/2) > 15) return false;
+        if (desired.zone === "A" && (cy <= dep || cy >= table.h - dep || Math.abs(cy - table.h/2) <= 15)) return false;
+        if (obj.x < 5 || obj.y < dep + 1 || obj.x > table.w - 5 || obj.y > table.h - dep - 1) return false;
+        if (objectives.some(o => centerDistance(obj, o) < minObjectiveGap)) return false;
+        if (items.some(i => !["objective", "road", "crossing"].includes(i.type) && centerDistance(obj, i) < 5)) return false;
+        return true;
+      }) || candidates[0];
+      items.push(legal);
+      objectives.push(legal);
+    }
+
+    function placeObjective(items, objectives, table, x, y, label, rng, allowNearTerrain = false) {
+      const size = 4;
+      let obj = { type: "objective", x: x - size/2, y: y - size/2, w: size, h: size, label };
+      for (let attempt = 0; attempt < 60; attempt++) {
+        const tooCloseTerrain = !allowNearTerrain && items.some(i => !["objective", "road", "crossing"].includes(i.type) && centerDistance(obj, i) < 8);
+        const tooCloseObj = objectives.some(o => centerDistance(obj, o) < 30);
+        if (!tooCloseTerrain && !tooCloseObj && obj.x > 5 && obj.y > 5 && obj.x < table.w - 5 && obj.y < table.h - 5) break;
+        obj.x += randBetween(rng, -6, 6);
+        obj.y += randBetween(rng, -6, 6);
+      }
+      items.push(obj);
+      objectives.push(obj);
+    }
+
+    function labelFor(type, items, offset = 0) {
+      const prefix = {
+        hill: "H", wood: "W", denseForest: "DF", rough: "R", marsh: "M", village: "V", ruin: "RU", river: "RV", stream: "S", road: "RD", obstacle: "LO", impassable: "I", crossing: "C", lake: "L", tower: "T", wagon: "WG", fortress: "FW", objective: "O"
+      }[type] || "T";
+      const count = items.filter(i => i.type === type).length + 1 + offset;
+      return `${prefix}${count}`;
+    }
+
+    function renderMaps() {
+      const wrap = document.getElementById("mapsWrap");
+      wrap.innerHTML = "";
+      for (const map of state.maps) wrap.appendChild(renderMapCard(map));
+    }
+
+    function renderMapCard(map) {
+      const card = document.createElement("article");
+      card.className = "map-card";
+      const usedTypes = [...new Set(map.items.map(i => i.type))];
+      card.innerHTML = `
+        <div class="map-card-header">
+          <div>
+            <div class="map-title">${escapeHtml(map.title)}</div>
+            <div class="footer-note">${escapeHtml(map.themeLabel)} · ${map.table.w} × ${map.table.h} cm · ${map.density} density</div>
+          </div>
+          <div class="map-meta">Seed:<br>${escapeHtml(shortSeed(map.seed))}<br>Deployment: ${map.dep} cm each side</div>
+        </div>
+        <div class="map-body">
+          <div class="svg-shell">${buildSvg(map)}</div>
+          <div>
+            <div class="legend-box">
+              <h3>Terrain Reference</h3>
+              <div class="legend-list">
+                ${usedTypes.map(t => terrainLegendItem(t, map)).join("")}
+              </div>
+            </div>
+            <div class="scenario-note"><strong>Scenario note:</strong> ${escapeHtml(MISSIONS[map.missionKey].note)}</div>
+            <div class="scenario-note"><strong>Fair-play checks:</strong> ${escapeHtml(fairPlaySummary(map))}</div>
+            <div class="scenario-note"><strong>Side choice:</strong> ${escapeHtml(sideChoiceSummary(map))}</div>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function shortSeed(seed) { return seed.length > 42 ? seed.slice(0, 42) + "…" : seed; }
+
+    function fairPlaySummary(map) {
+      const styleNames = { clear: "battle-report clarity", competitive: "competitive semi-symmetry", narrative: "narrative scenery" };
+      const water = map.items.some(i => isWater(i.type)) ? "water has marked crossings" : "no major water barrier";
+      const roads = map.items.some(i => i.type === "road") ? "subtle functional road" : "no road advantage";
+      const comp = map.playStyle === "competitive" ? "paired terrain is intentionally close but not identical" : "terrain is balanced by lanes and readability";
+      return `${styleNames[map.playStyle] || "clear play"}; ${comp}; explicit footprints; clear deployment zones; central maneuver space; ${roads}; ${water}; objective buffers shown when enabled.`;
+    }
+
+    function sideChoiceSummary(map) {
+      const north = sideScore(map, "north");
+      const south = sideScore(map, "south");
+      const diff = north.total - south.total;
+      const better = diff >= 0 ? north : south;
+      const other = diff >= 0 ? south : north;
+      const betterName = diff >= 0 ? "North" : "South";
+      const otherName = diff >= 0 ? "South" : "North";
+      const close = Math.abs(diff) < 1.6;
+      if (map.playStyle === "competitive") {
+        if (close) return "Competitive mode keeps both long-edge sides close in value, with small asymmetries so choosing side matters without deciding the game. The player not choosing side should still have a viable first-turn benefit.";
+        return `${betterName} side has a slight positional edge (${better.tags.join(", ") || "terrain access"}); ${otherName} side has counterplay through ${other.tags.join(", ") || "clearer lanes / tempo"}. Intended for side choice to matter, not to dominate.`;
+      }
+      return close ? "Both long-edge sides are broadly comparable." : `${betterName} side is a little more terrain-favoured; ${otherName} side should have clearer maneuver or tempo options.`;
+    }
+
+    function sideScore(map, side) {
+      const topHalf = side === "north";
+      const dep = map.dep;
+      const bandMin = topHalf ? dep : map.table.h / 2;
+      const bandMax = topHalf ? map.table.h / 2 : map.table.h - dep;
+      let total = 0;
+      const tags = [];
+      const add = (score, tag) => { total += score; if (tag && !tags.includes(tag)) tags.push(tag); };
+      for (const item of map.items) {
+        const cy = item.path && item.path.length ? pointOnRoad(item, .5).y : item.y + item.h / 2;
+        if (cy < bandMin || cy > bandMax) continue;
+        if (["wood", "denseForest", "village", "ruin"].includes(item.type)) add(1.2, "defended/dense ground");
+        else if (item.type === "hill") add(1.0, "hill positions");
+        else if (item.type === "rough" || item.type === "marsh") add(.7, "charge-breaking terrain");
+        else if (item.type === "obstacle") add(.55, "linear defenses");
+        else if (item.type === "road") add(.35, "road access");
+        else if (item.type === "crossing") add(.45, "crossing control");
+        else if (isWater(item.type)) add(-.4, "water pressure");
+      }
+      const lanes = sideLaneScore(map, topHalf);
+      total += lanes.score;
+      if (lanes.score > .4) tags.push("clear maneuver lanes");
+      return { total, tags: tags.slice(0, 3) };
+    }
+
+    function sideLaneScore(map, north) {
+      const y = north ? map.dep + (map.table.h / 2 - map.dep) * .45 : map.table.h - map.dep - (map.table.h / 2 - map.dep) * .45;
+      const lanes = [map.table.w * .25, map.table.w * .5, map.table.w * .75];
+      let open = 0;
+      for (const lx of lanes) {
+        const blocked = map.items.some(i => !["road", "objective", "crossing", "wagon"].includes(i.type) && i.x < lx && i.x + i.w > lx && i.y < y && i.y + i.h > y);
+        if (!blocked) open++;
+      }
+      return { score: open * .22 };
+    }
+
+    function terrainCodesForType(type, map) {
+      return map.items.filter(i => i.type === type).map(i => i.label).join(", ");
+    }
+
+    function terrainLegendItem(type, map) {
+      const r = TERRAIN_RULES[type];
+      const codes = terrainCodesForType(type, map);
+      return `<div class="terrain-item">
+        <span class="swatch" style="background:${r.color}"></span>
+        <div><strong>${escapeHtml(r.name)}</strong> <span class="codes">(${escapeHtml(codes)})</span><br>${escapeHtml(r.rules)}<br>${r.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join("")}</div>
+      </div>`;
+    }
+
+    function buildSvg(map) {
+      const { table, dep } = map;
+      const vbW = 1000;
+      const vbH = Math.round(vbW * table.h / table.w);
+      const sx = vbW / table.w;
+      const sy = vbH / table.h;
+      const showGrid = document.getElementById("showGrid").checked;
+      const bg = THEMES[map.themeKey].bg;
+      const defs = `
+        <defs>
+          <pattern id="grid-${hash(map.seed)}" width="${10*sx}" height="${10*sy}" patternUnits="userSpaceOnUse">
+            <path d="M ${10*sx} 0 L 0 0 0 ${10*sy}" fill="none" stroke="rgba(80,55,25,.25)" stroke-width="1"/>
+          </pattern>
+          <filter id="shadow-${hash(map.seed)}" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="1" dy="2" stdDeviation="1.2" flood-opacity="0.25"/></filter>
+        </defs>`;
+      let svg = `<svg viewBox="0 0 ${vbW} ${vbH}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Warmaster battlefield map">${defs}`;
+      svg += `<rect x="0" y="0" width="${vbW}" height="${vbH}" fill="${bg}"/>`;
+      if (showGrid) svg += `<rect x="0" y="0" width="${vbW}" height="${vbH}" fill="url(#grid-${hash(map.seed)})"/>`;
+      svg += drawTenCmNumbers(map, sx, sy, vbW, vbH);
+      svg += `<rect x="0" y="0" width="${vbW}" height="${dep*sy}" fill="rgba(120,70,45,.16)" stroke="rgba(80,40,20,.35)" stroke-dasharray="8 6"/>`;
+      svg += `<rect x="0" y="${(table.h-dep)*sy}" width="${vbW}" height="${dep*sy}" fill="rgba(120,70,45,.16)" stroke="rgba(80,40,20,.35)" stroke-dasharray="8 6"/>`;
+      svg += text(8, dep*sy - 8, `Deployment ${dep}cm`, 15, "#56351d", "start");
+      svg += text(8, (table.h-dep)*sy + 20, `Deployment ${dep}cm`, 15, "#56351d", "start");
+      svg += drawMissionGuides(map, sx, sy, vbW, vbH);
+      svg += drawObjectiveValidation(map, sx, sy, vbW, vbH);
+      for (const item of map.items) svg += drawItem(item, map, sx, sy, vbW, vbH);
+      svg += drawReadableLabels(map, sx, sy, vbW, vbH);
+      svg += `<rect x="0" y="0" width="${vbW}" height="${vbH}" fill="none" stroke="#3c2a16" stroke-width="4"/>`;
+      svg += scaleBar(table, sx, sy, vbH);
+      svg += `</svg>`;
+      return svg;
+    }
+
+    function drawTenCmNumbers(map, sx, sy, vbW, vbH) {
+      if (!document.getElementById("showGrid")?.checked) return "";
+      let out = "";
+      for (let x = 10; x < map.table.w; x += 10) out += text(x * sx + 2, 12, String(x), 8, "rgba(65,45,20,.45)", "start");
+      for (let y = 10; y < map.table.h; y += 10) out += text(4, y * sy - 2, String(y), 8, "rgba(65,45,20,.45)", "start");
+      return out;
+    }
+
+    function drawObjectiveValidation(map, sx, sy, vbW, vbH) {
+      if (!document.getElementById("showObjectiveOverlay")?.checked) return "";
+      if (!map.objectives || !map.objectives.length) return "";
+      let out = "";
+      const minGap = Math.min(30, Math.max(24, map.table.w * .28));
+      for (const obj of map.objectives) {
+        const cx = (obj.x + obj.w/2) * sx;
+        const cy = (obj.y + obj.h/2) * sy;
+        out += `<circle cx="${cx}" cy="${cy}" r="${5*sx}" fill="rgba(255,255,255,.10)" stroke="rgba(135,80,20,.55)" stroke-dasharray="4 4"/>`;
+        out += `<circle cx="${cx}" cy="${cy}" r="${minGap*sx}" fill="none" stroke="rgba(160,40,20,.18)" stroke-dasharray="6 8"/>`;
+      }
+      return out;
+    }
+
+    function drawMissionGuides(map, sx, sy, vbW, vbH) {
+      const { table, missionKey } = map;
+      let out = "";
+      if (missionKey === "takeHold") {
+        out += `<rect x="0" y="${(table.h/2-15)*sy}" width="${vbW}" height="${30*sy}" fill="rgba(212,170,82,.12)" stroke="rgba(120,85,20,.55)" stroke-dasharray="10 8"/>`;
+        out += text(vbW-8, table.h/2*sy - 18, "Objective Zone B", 13, "#6b4a17", "end");
+      }
+      if (["tower", "watchtower"].includes(missionKey)) {
+        out += `<circle cx="${table.w/2*sx}" cy="${table.h/2*sy}" r="${20*sx}" fill="rgba(255,255,255,.13)" stroke="rgba(80,40,20,.5)" stroke-dasharray="9 7"/>`;
+        out += text(table.w/2*sx, table.h/2*sy - 25*sx, "20cm clear zone", 13, "#5a371c", "middle");
+      }
+      if (missionKey === "breach") {
+        out += `<rect x="0" y="${(table.h-20)*sy}" width="${vbW}" height="${20*sy}" fill="rgba(80,80,80,.12)" stroke="rgba(80,80,80,.55)" stroke-dasharray="8 6"/>`;
+        out += text(vbW/2, (table.h-13)*sy, "Defender fortress edge", 14, "#302b26", "middle");
+      }
+      return out;
+    }
+
+    function drawItem(item, map, sx, sy, vbW, vbH) {
+      const r = TERRAIN_RULES[item.type];
+      const x = item.x * sx, y = item.y * sy, w = item.w * sx, h = item.h * sy;
+      const cx = x + w/2, cy = y + h/2;
+      const rot = item.angle || 0;
+      const common = `transform="rotate(${rot} ${cx} ${cy})" filter="url(#shadow-${hash(map.seed)})"`;
+      let out = "";
+
+      if (["wood", "denseForest", "hill", "rough", "marsh", "village", "ruin", "impassable", "lake"].includes(item.type)) {
+        const rng = rngFromSeed(map.seed + item.label);
+        const path = makeBlobPath(x, y, w, h, rng);
+        out += `<path d="${path}" fill="${r.color}" stroke="rgba(35,25,12,.75)" stroke-width="2" ${common}/>`;
+        if (item.type === "wood" || item.type === "denseForest") {
+          for (let i = 0; i < 6; i++) out += `<circle cx="${x + w*(.18 + rng()*.64)}" cy="${y + h*(.18 + rng()*.64)}" r="${Math.max(3, Math.min(w,h)*.07)}" fill="rgba(20,55,22,.45)"/>`;
+        }
+        if (item.type === "village") {
+          for (let i = 0; i < 5; i++) out += `<rect x="${x + w*(.12 + rng()*.68)}" y="${y + h*(.18 + rng()*.55)}" width="${w*.13}" height="${h*.16}" fill="#6d5540" stroke="#352618" stroke-width="1" transform="rotate(${rot + randBetween(rng,-15,15)} ${cx} ${cy})"/>`;
+        }
+      } else if (["road", "river", "stream"].includes(item.type)) {
+        const color = r.color;
+        if (item.path) {
+          const p = item.path.map(pt => ({ x: pt.x * sx, y: pt.y * sy }));
+          const pathD = `M ${p[0].x} ${p[0].y} C ${p[1].x} ${p[1].y}, ${p[2].x} ${p[2].y}, ${p[3].x} ${p[3].y}`;
+          if (item.type === "road") {
+            out += `<path d="${pathD}" fill="none" stroke="${color}" stroke-width="${Math.max(7, 3.5 * sy)}" stroke-linecap="round" opacity=".88"/>`;
+            out += `<path d="${pathD}" fill="none" stroke="rgba(50,35,20,.38)" stroke-width="1.5" stroke-dasharray="7 7"/>`;
+          } else {
+            const waterWidth = Math.max(5, (item.width || item.h || 2.5) * sy);
+            out += `<path d="${pathD}" fill="none" stroke="${color}" stroke-width="${waterWidth}" stroke-linecap="round" opacity=".9"/>`;
+            out += `<path d="${pathD}" fill="none" stroke="rgba(230,250,255,.34)" stroke-width="1.7" stroke-dasharray="10 9"/>`;
+          }
+        }
+      } else if (item.type === "crossing") {
+        out += `<rect x="${x}" y="${y}" width="${w}" height="${Math.max(6,h)}" rx="2" fill="${r.color}" stroke="#2c1a0c" stroke-width="2" transform="rotate(${item.angle || 0} ${cx} ${cy})" filter="url(#shadow-${hash(map.seed)})"/>`;
+        out += `<line x1="${x+2}" y1="${cy}" x2="${x+w-2}" y2="${cy}" stroke="rgba(255,230,170,.55)" stroke-width="1" transform="rotate(${item.angle || 0} ${cx} ${cy})"/>`;
+      } else if (item.type === "obstacle") {
+        if (item.segments && item.segments.length) {
+          for (const seg of item.segments) {
+            const x1 = seg.x1 * sx, y1 = seg.y1 * sy, x2 = seg.x2 * sx, y2 = seg.y2 * sy;
+            out += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${r.color}" stroke-width="${Math.max(5, 1.25 * sy)}" stroke-linecap="butt" filter="url(#shadow-${hash(map.seed)})"/>`;
+            out += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#2d261e" stroke-width="1" stroke-linecap="butt" opacity=".75"/>`;
+          }
+        } else {
+          out += `<rect x="${x}" y="${y}" width="${w}" height="${Math.max(4,h)}" fill="${r.color}" stroke="#2d261e" stroke-width="1.5" ${common}/>`;
+        }
+      } else if (["objective", "wagon", "tower"].includes(item.type)) {
+        const shapeColor = r.color;
+        if (item.type === "objective") out += `<circle cx="${cx}" cy="${cy}" r="${Math.max(8, w/2)}" fill="${shapeColor}" stroke="#4c3210" stroke-width="2" filter="url(#shadow-${hash(map.seed)})"/>`;
+        else if (item.type === "wagon") {
+          out += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${shapeColor}" stroke="#3c2414" stroke-width="2" filter="url(#shadow-${hash(map.seed)})"/>`;
+          out += `<circle cx="${x+w*.2}" cy="${y+h}" r="3" fill="#2b1a10"/><circle cx="${x+w*.8}" cy="${y+h}" r="3" fill="#2b1a10"/>`;
+        } else out += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="${shapeColor}" stroke="#2f2518" stroke-width="2" filter="url(#shadow-${hash(map.seed)})"/>`;
+      } else if (item.type === "fortress") {
+        out += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${r.color}" stroke="#252422" stroke-width="2"/>`;
+        for (let bx = x; bx < x+w; bx += 28) out += `<rect x="${bx}" y="${y}" width="14" height="${h*.55}" fill="#77736b"/>`;
+      }
+
+      return out;
+    }
+
+    function itemAnchor(item, sx, sy) {
+      if (item.path && item.path.length) {
+        const p = pointOnRoad(item, 0.5);
+        return { x: p.x * sx, y: p.y * sy };
+      }
+      return { x: (item.x + item.w / 2) * sx, y: (item.y + item.h / 2) * sy };
+    }
+
+    function itemBoundsPx(item, sx, sy) {
+      if (item.path && item.path.length) {
+        const xs = item.path.map(p => p.x * sx);
+        const ys = item.path.map(p => p.y * sy);
+        const pad = Math.max(10, ((item.width || item.h || 3) * sy) + 8);
+        return {
+          x: Math.min(...xs) - pad,
+          y: Math.min(...ys) - pad,
+          w: Math.max(...xs) - Math.min(...xs) + pad * 2,
+          h: Math.max(...ys) - Math.min(...ys) + pad * 2
+        };
+      }
+      return { x: item.x * sx, y: item.y * sy, w: item.w * sx, h: item.h * sy };
+    }
+
+    function rectsOverlap(a, b, pad = 0) {
+      return !(a.x + a.w + pad < b.x || b.x + b.w + pad < a.x || a.y + a.h + pad < b.y || b.y + b.h + pad < a.y);
+    }
+
+    function clampRectToMap(rect, vbW, vbH) {
+      return {
+        x: Math.max(3, Math.min(rect.x, vbW - rect.w - 3)),
+        y: Math.max(3, Math.min(rect.y, vbH - rect.h - 3)),
+        w: rect.w,
+        h: rect.h
+      };
+    }
+
+    function labelCandidates(anchor, label, itemBounds, vbW, vbH) {
+      const w = Math.max(28, label.length * 8.5 + 12);
+      const h = 20;
+      const gap = 8;
+      const center = { x: anchor.x - w / 2, y: anchor.y - h / 2, w, h, leader: false };
+      const positions = [
+        center,
+        { x: itemBounds.x + itemBounds.w + gap, y: anchor.y - h / 2, w, h, leader: true },
+        { x: itemBounds.x - w - gap, y: anchor.y - h / 2, w, h, leader: true },
+        { x: anchor.x - w / 2, y: itemBounds.y - h - gap, w, h, leader: true },
+        { x: anchor.x - w / 2, y: itemBounds.y + itemBounds.h + gap, w, h, leader: true },
+        { x: itemBounds.x + itemBounds.w + gap, y: itemBounds.y - h - gap, w, h, leader: true },
+        { x: itemBounds.x - w - gap, y: itemBounds.y - h - gap, w, h, leader: true },
+        { x: itemBounds.x + itemBounds.w + gap, y: itemBounds.y + itemBounds.h + gap, w, h, leader: true },
+        { x: itemBounds.x - w - gap, y: itemBounds.y + itemBounds.h + gap, w, h, leader: true }
+      ];
+      return positions.map(p => clampRectToMap(p, vbW, vbH));
+    }
+
+    function drawReadableLabels(map, sx, sy, vbW, vbH) {
+      const occupied = [];
+      const terrainBounds = map.items.map(item => ({ item, bounds: itemBoundsPx(item, sx, sy) }));
+      const priority = { objective: 0, tower: 1, wagon: 2, crossing: 3, road: 4, river: 5, stream: 5 };
+      const ordered = [...map.items].sort((a, b) => (priority[a.type] ?? 10) - (priority[b.type] ?? 10));
+      let out = "";
+
+      for (const item of ordered) {
+        const anchor = itemAnchor(item, sx, sy);
+        const ownBounds = itemBoundsPx(item, sx, sy);
+        const candidates = labelCandidates(anchor, item.label, ownBounds, vbW, vbH);
+        let best = candidates[0];
+        let bestScore = Infinity;
+
+        for (const c of candidates) {
+          const overlapsLabel = occupied.some(o => rectsOverlap(c, o, 3));
+          const overlapsTerrain = terrainBounds.some(tb => tb.item !== item && rectsOverlap(c, tb.bounds, 2));
+          const dx = (c.x + c.w / 2) - anchor.x;
+          const dy = (c.y + c.h / 2) - anchor.y;
+          const dist = Math.hypot(dx, dy);
+          const score = (overlapsLabel ? 10000 : 0) + (overlapsTerrain ? 4500 : 0) + dist + (c.leader ? 18 : 0);
+          if (score < bestScore) { bestScore = score; best = c; }
+          if (!overlapsLabel && !overlapsTerrain) break;
+        }
+
+        occupied.push(best);
+        const fill = ["road", "stream", "river", "crossing"].includes(item.type) ? "#1d140c" : "#fff8dc";
+        const textFill = ["road", "stream", "river", "crossing"].includes(item.type) ? "#1d140c" : "#2a160b";
+        const cx = best.x + best.w / 2;
+        const cy = best.y + best.h / 2;
+        if (best.leader) {
+          out += `<line x1="${anchor.x}" y1="${anchor.y}" x2="${cx}" y2="${cy}" stroke="rgba(40,25,10,.55)" stroke-width="1" stroke-dasharray="3 3"/>`;
+        }
+        out += `<rect x="${best.x}" y="${best.y}" width="${best.w}" height="${best.h}" rx="5" fill="rgba(255,244,216,.86)" stroke="rgba(55,35,15,.68)" stroke-width="1"/>`;
+        out += text(cx, cy + 5, item.label, 13, textFill, "middle", "bold");
+      }
+      return out;
+    }
+
+    function scaleBar(table, sx, sy, vbH) {
+      const x = 18, y = vbH - 22, len = 20 * sx;
+      return `<g><line x1="${x}" y1="${y}" x2="${x+len}" y2="${y}" stroke="#2c1b0d" stroke-width="4"/><line x1="${x}" y1="${y-6}" x2="${x}" y2="${y+6}" stroke="#2c1b0d" stroke-width="3"/><line x1="${x+len}" y1="${y-6}" x2="${x+len}" y2="${y+6}" stroke="#2c1b0d" stroke-width="3"/>${text(x+len/2, y-9, "20 cm", 13, "#2c1b0d", "middle")}</g>`;
+    }
+
+    function text(x, y, content, size, fill, anchor = "middle", weight = "normal") {
+      return `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="${size}" font-family="Georgia, serif" font-weight="${weight}" fill="${fill}" stroke="rgba(0,0,0,.35)" stroke-width=".35" paint-order="stroke">${escapeHtml(content)}</text>`;
+    }
+
+    function hash(str) {
+      let h = 0;
+      for (let i = 0; i < str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+      return Math.abs(h).toString(36);
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"]/g, s => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[s]));
+    }
+
+    function generateAll(useNewSeed = false) {
+      const mapsCount = Math.max(1, Math.min(12, Number(document.getElementById("mapsCount").value || 1)));
+      let seedField = document.getElementById("seed");
+      if (useNewSeed || !seedField.value.trim()) seedField.value = "WMR-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+      const baseSeed = seedField.value.trim();
+      state.maps = Array.from({ length: mapsCount }, (_, i) => generateMap(i + 1, baseSeed));
+      renderMaps();
+    }
+
+    async function exportPdf() {
+      const mode = document.getElementById("pdfMode").value;
+      let cards = [...document.querySelectorAll(".map-card")];
+      if (!cards.length) {
+        generateAll(false);
+        cards = [...document.querySelectorAll(".map-card")];
+      }
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const margin = 7;
+
+      if (mode === "separate") {
+        for (let i = 0; i < cards.length; i++) {
+          if (i > 0) pdf.addPage();
+          const canvas = await html2canvas(cards[i], { scale: 2, backgroundColor: "#f3ead5", useCORS: true });
+          const img = canvas.toDataURL("image/jpeg", .95);
+          const ratio = Math.min((pageW - margin*2) / canvas.width, (pageH - margin*2) / canvas.height);
+          const w = canvas.width * ratio;
+          const h = canvas.height * ratio;
+          pdf.addImage(img, "JPEG", (pageW - w)/2, (pageH - h)/2, w, h);
+        }
+      } else {
+        const perRow = cards.length <= 2 ? cards.length : 2;
+        const rows = Math.ceil(cards.length / perRow);
+        const cellW = (pageW - margin*2) / perRow;
+        const cellH = (pageH - margin*2) / rows;
+        for (let i = 0; i < cards.length; i++) {
+          const canvas = await html2canvas(cards[i], { scale: 1.5, backgroundColor: "#f3ead5", useCORS: true });
+          const img = canvas.toDataURL("image/jpeg", .9);
+          const col = i % perRow;
+          const row = Math.floor(i / perRow);
+          const ratio = Math.min((cellW - 3) / canvas.width, (cellH - 3) / canvas.height);
+          const w = canvas.width * ratio;
+          const h = canvas.height * ratio;
+          const x = margin + col * cellW + (cellW - w)/2;
+          const y = margin + row * cellH + (cellH - h)/2;
+          pdf.addImage(img, "JPEG", x, y, w, h);
+        }
+      }
+
+      const stamp = new Date().toISOString().slice(0,10);
+      pdf.save(`warmaster-maps-${stamp}.pdf`);
+    }
+
+    document.getElementById("generateBtn").addEventListener("click", () => generateAll(false));
+    document.getElementById("rerollBtn").addEventListener("click", () => generateAll(true));
+    document.getElementById("exportBtn").addEventListener("click", exportPdf);
+
+    generateAll(true);
+  </script>
+</body>
+</html>
