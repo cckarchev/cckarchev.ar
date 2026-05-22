@@ -1,2 +1,12 @@
+# Local editor / OS
 .claude/
 .DS_Store
+
+# Node / Vite
+node_modules/
+dist/
+*.log
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local

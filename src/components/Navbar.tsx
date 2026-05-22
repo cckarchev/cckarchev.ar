@@ -1,0 +1,28 @@
+import { NavLink } from 'react-router-dom'
+
+export default function Navbar() {
+  return (
+    <nav className="sticky top-0 z-50 flex items-center gap-5 px-4 py-2.5 bg-bg border-b border-accent/35 text-ink text-sm">
+      <NavLink
+        to="/"
+        className="font-bold tracking-wider text-accent hover:text-ink no-underline"
+      >
+        CCK
+      </NavLink>
+      <div className="flex gap-2 ml-auto flex-wrap">
+        <a
+          href="/tools/warmaster-map/"
+          className="text-ink hover:bg-accent/15 hover:text-accent rounded px-2.5 py-1.5 no-underline"
+        >
+          Warmaster Maps
+        </a>
+        <a
+          href="/tools/greathelm-cards/"
+          className="text-ink hover:bg-accent/15 hover:text-accent rounded px-2.5 py-1.5 no-underline"
+        >
+          Greathelm Cards
+        </a>
+      </div>
+    </nav>
+  )
+}

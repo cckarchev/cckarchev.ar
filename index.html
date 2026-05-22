@@ -1,152 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CCK · Centro Cultural Karchev</title>
-  <style>
-    :root {
-      --bg: #160f0a;
-      --panel: #2a1712;
-      --panel-2: #3b2118;
-      --ink: #f6ecd2;
-      --muted: #d1b889;
-      --accent: #d4aa52;
-      --line: rgba(255, 221, 160, 0.22);
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.5;
-    }
-
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 3rem 1.25rem 4rem;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 2rem 0 3rem;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 3rem;
-    }
-    .hero h1 {
-      margin: 0 0 0.5rem;
-      font-size: 2.5rem;
-      letter-spacing: 0.04em;
-      color: var(--accent);
-    }
-    .hero p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1.1rem;
-    }
-
-    h2 {
-      font-size: 1.25rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 0 0 1.25rem;
-      font-weight: 600;
-    }
-
-    .tools {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
-    }
-
-    .tool-card {
-      display: block;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 1.25rem;
-      text-decoration: none;
-      color: inherit;
-      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
-    }
-    .tool-card:hover {
-      border-color: var(--accent);
-      background: var(--panel-2);
-      transform: translateY(-2px);
-    }
-    .tool-card h3 {
-      margin: 0 0 0.4rem;
-      color: var(--accent);
-      font-size: 1.1rem;
-    }
-    .tool-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-  </style>
-
-  <!-- CCK navbar — keep in sync across: index.html, tools/*/index.html -->
-  <style>
-    .cck-nav {
-      position: sticky; top: 0; z-index: 1000;
-      grid-column: 1 / -1;
-      display: flex; align-items: center; gap: 1.25rem;
-      padding: 0.6rem 1rem;
-      background: #160f0a;
-      border-bottom: 1px solid rgba(212, 170, 82, 0.35);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-size: 0.95rem;
-      color: #f6ecd2;
-    }
-    .cck-nav-brand {
-      font-weight: 700; letter-spacing: 0.06em;
-      color: #d4aa52; text-decoration: none;
-    }
-    .cck-nav-brand:hover { color: #f6ecd2; }
-    .cck-nav-links { display: flex; gap: 0.5rem; margin-left: auto; flex-wrap: wrap; }
-    .cck-nav-links a {
-      color: #f6ecd2; text-decoration: none;
-      padding: 0.3rem 0.6rem; border-radius: 4px;
-    }
-    .cck-nav-links a:hover { background: rgba(212, 170, 82, 0.15); color: #d4aa52; }
-    .cck-nav-links a[aria-current="page"] { color: #d4aa52; background: rgba(212, 170, 82, 0.1); }
-  </style>
-</head>
-<body>
-  <!-- CCK navbar — keep in sync across: index.html, tools/*/index.html -->
-  <nav class="cck-nav">
-    <a class="cck-nav-brand" href="/" aria-current="page">CCK</a>
-    <div class="cck-nav-links">
-      <a href="/tools/warmaster-map/">Warmaster Maps</a>
-      <a href="/tools/greathelm-cards/">Greathelm Cards</a>
-    </div>
-  </nav>
-
-  <main>
-    <section class="hero">
-      <h1>Centro Cultural Karchev</h1>
-      <p>Herramientas y recursos para el club de juegos</p>
-    </section>
-
-    <section>
-      <h2>Herramientas</h2>
-      <div class="tools">
-        <a class="tool-card" href="/tools/warmaster-map/">
-          <h3>Warmaster Maps</h3>
-          <p>Generador de campos de batalla para Warmaster Revolution.</p>
-        </a>
-        <a class="tool-card" href="/tools/greathelm-cards/">
-          <h3>Greathelm Cards</h3>
-          <p>Generador de cartas de unidades para Greathelm.</p>
-        </a>
-      </div>
-    </section>
-  </main>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CCK · Centro Cultural Karchev</title>
+    <script type="text/javascript">
+      // Decodes paths from the 404.html SPA fallback back into real URLs.
+      // Must run before the router initializes. See public/404.html.
+      (function (l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function (s) {
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
+        }
+      })(window.location);
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
