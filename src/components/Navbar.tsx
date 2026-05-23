@@ -20,6 +20,12 @@ export default function Navbar() {
         >
           Greathelm Cards
         </Link>
+        <Link
+          to="/members"
+          className="text-ink hover:bg-accent/15 hover:text-accent rounded px-2.5 py-1.5 no-underline"
+        >
+          Miembros
+        </Link>
       </div>
       <div className="ml-auto">
         <AuthMenu />

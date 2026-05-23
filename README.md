@@ -1,6 +1,6 @@
 # cckarchev.ar
 
-Community site for **Centro Cultural Karchev (CCK)**, a tabletop gaming club. Hosts a growing set of tools — currently a Warmaster Revolution map generator and a Greathelm card generator — with member lists, event calendars, and attendance tracking planned next, backed by Supabase. Visitors can browse everything anonymously; signing in with Google unlocks per-member features.
+Community site for **Centro Cultural Karchev (CCK)**, a tabletop gaming club. Hosts a growing set of tools — currently a Warmaster Revolution map generator and a Greathelm card generator — plus a club member list, with event calendars and attendance tracking planned next, backed by Supabase. Visitors can browse everything anonymously; signing in with Google unlocks per-member features.
 
 ## Tech stack
 

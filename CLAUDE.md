@@ -32,6 +32,7 @@ Across all of the above, do **not** translate domain-specific terms that origina
 │   │   └── supabase.ts          # shared Supabase client
 │   ├── routes/
 │   │   ├── Home.tsx
+│   │   ├── Members.tsx          # /members — club member list (reads users_public)
 │   │   ├── Privacy.tsx          # /privacy — privacy policy (required for Google OAuth)
 │   │   ├── Terms.tsx            # /terms — terms of use
 │   │   └── tools/
@@ -86,10 +87,15 @@ The site is **publicly browsable without signing in** — the tools work for ano
 - **Session access**: `AuthProvider` (in `src/context/AuthContext.tsx`) owns the session and exposes `useAuth()` → `{ session, signIn, signOut }`. The context is split across two files — `authContext.ts` (the `createContext` + `useAuth` hook) and `AuthContext.tsx` (the provider component) — because `eslint-plugin-react-refresh` forbids exporting a component and non-component from the same module. Follow that split for any new context.
 - **Sign-in** is Google OAuth via `supabase.auth.signInWithOAuth`, redirecting back to `window.location.origin`. The navbar's `AuthMenu` renders the sign-in button when signed out and the avatar + account popup (name, email, sign out) when signed in.
 - **Identity ↔ data mapping** is by **email**: `auth.jwt() ->> 'email'`. The `users` table has a unique, nullable `email` so a row can exist before a Google account links to it.
+- **Roles**: `users.role` is `'basic' | 'admin'` (default `basic`). `current_user_role()` and `is_admin()` are SECURITY DEFINER functions that resolve the caller's role by email — use them in RLS policies and let a signed-in user check their _own_ role.
+- **Public reads go through a view**: the `users` table itself is locked to anon/authenticated at the column level (only `id`, `name` are granted). The `Members` page reads `users_public` (a `security_invoker` view exposing just `id, name`), never the base table. `email` and `role` are not readable through the public API.
+- **Admin management**: admins can insert/update/delete members via RLS write policies gated on `is_admin()` (anon and basic users have no write policy, so RLS denies them). Because the `(id, name)` column grant blocks even admins from reading `email`/`role` off the base table, admins read full rows via the `admin_list_users()` SECURITY DEFINER RPC (guards on `is_admin()`, raises otherwise). Note: admin PostgREST writes should request `return=minimal` or `.select('id,name')` — returning the full representation would hit the column grant and fail.
 
 ### Migrations
 
 SQL migrations live in `supabase/migrations/`, timestamped (`pnpm db:migration:new <name>` scaffolds one). Apply them to the remote project with `pnpm db:push` after `pnpm db:link` (both read `.env`). **RLS is enabled on every table; access policies are added per-feature, not speculatively** — a new table starts locked (RLS on, no policies) and gains exactly the policies a feature needs. Mirror the security-definer RPC pattern (e.g. for reads that must not expose a restricted column) when a plain policy can't express the rule.
+
+**Column-grant gotcha**: Supabase grants `anon`/`authenticated` table-level SELECT on **every column** of new `public` tables by default. RLS gates _rows_, not columns — so the moment you add a permissive `SELECT` policy, every column becomes readable, including ones you meant to hide. To expose only some columns, `revoke select on <table> from anon, authenticated` then `grant select (col, …)`. Don't rely on an additive column `grant` alone — it won't restrict anything. (This is why `users` revokes the blanket grant; see `20260523233313_restrict_users_columns_to_public.sql`.)
 
 ## Design tokens and primitives
 
