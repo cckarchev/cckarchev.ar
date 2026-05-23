@@ -23,6 +23,7 @@ Across all of the above, do **not** translate domain-specific terms that origina
 ├── src/
 │   ├── components/
 │   │   ├── Navbar.tsx           # global site navbar (rendered above all routes)
+│   │   ├── Footer.tsx           # global site footer (privacy/terms links, rendered below all routes)
 │   │   ├── AuthMenu.tsx         # navbar sign-in button / avatar + account popup menu
 │   │   └── ui/                  # shared UI primitives — use these before rolling your own
 │   ├── context/                 # React context providers (e.g. AuthProvider / useAuth)
