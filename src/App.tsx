@@ -1,12 +1,29 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { useLayoutEffect } from 'react'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './routes/Home'
 import GreathelmCards from './routes/tools/GreathelmCards'
 import WarmasterMap from './routes/tools/WarmasterMap'
+import { DEFAULT_TITLE, formatTitle } from './hooks/useDocumentTitle'
+
+// Resets the tab title to the site default on every navigation. This runs in a
+// layout effect, and React fires all layout effects before any passive effect
+// in the same commit, so a route's own useDocumentTitle (a passive effect) runs
+// afterwards and overrides this. The net effect: routes that set a title get
+// it, and a route that forgets to falls back to the default instead of keeping
+// the previous page's title.
+function ResetDocumentTitle() {
+  const { pathname } = useLocation()
+  useLayoutEffect(() => {
+    document.title = formatTitle(DEFAULT_TITLE)
+  }, [pathname])
+  return null
+}
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ResetDocumentTitle />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

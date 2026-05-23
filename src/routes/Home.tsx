@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { DEFAULT_TITLE, useDocumentTitle } from '../hooks/useDocumentTitle'
 
 export default function Home() {
-  useDocumentTitle('Centro Cultural Karchev')
+  useDocumentTitle(DEFAULT_TITLE)
 
   return (
     <main className="max-w-4xl mx-auto px-5 pb-16 pt-12">
