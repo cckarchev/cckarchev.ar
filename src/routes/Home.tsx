@@ -17,8 +17,8 @@ export default function Home() {
           Herramientas
         </h2>
         <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(260px,1fr))]">
-          <a
-            href="/tools/warmaster-map/"
+          <Link
+            to="/tools/warmaster-map"
             className="block bg-panel border border-accent/20 rounded-lg p-5 no-underline text-inherit hover:border-accent hover:bg-panel-2 hover:-translate-y-0.5 transition"
           >
             <h3 className="text-accent text-lg mb-1.5 font-semibold">
@@ -27,7 +27,7 @@ export default function Home() {
             <p className="text-muted text-sm m-0">
               Generador de campos de batalla para Warmaster Revolution.
             </p>
-          </a>
+          </Link>
           <Link
             to="/tools/greathelm-cards"
             className="block bg-panel border border-accent/20 rounded-lg p-5 no-underline text-inherit hover:border-accent hover:bg-panel-2 hover:-translate-y-0.5 transition"

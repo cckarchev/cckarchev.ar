@@ -10,12 +10,12 @@ export default function Navbar() {
         CCK
       </NavLink>
       <div className="flex gap-2 ml-auto flex-wrap">
-        <a
-          href="/tools/warmaster-map/"
+        <Link
+          to="/tools/warmaster-map"
           className="text-ink hover:bg-accent/15 hover:text-accent rounded px-2.5 py-1.5 no-underline"
         >
           Warmaster Maps
-        </a>
+        </Link>
         <Link
           to="/tools/greathelm-cards"
           className="text-ink hover:bg-accent/15 hover:text-accent rounded px-2.5 py-1.5 no-underline"
