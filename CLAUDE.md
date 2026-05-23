@@ -15,3 +15,129 @@ If you are unsure which identity to use, check `git log` to see which authors al
 - **Git commit messages**: Argentinian Spanish, matching the existing lowercase, conversational style visible in `git log`.
 
 Across all of the above, do **not** translate domain-specific terms that originate in English. Game names (Warmaster, Greathelm), rule names, unit types, scenario names, and similar terminology stay in English to preserve the established vocabulary used by the club and the wider community.
+
+## Project layout
+
+```
+.
+├── src/
+│   ├── components/
+│   │   ├── Navbar.tsx           # global site navbar (rendered above all routes)
+│   │   └── ui/                  # shared UI primitives — use these before rolling your own
+│   ├── routes/
+│   │   ├── Home.tsx
+│   │   └── tools/
+│   │       ├── GreathelmCards/  # one folder per tool route
+│   │       └── WarmasterMap/
+│   ├── App.tsx                  # router setup
+│   ├── main.tsx                 # React entry point
+│   ├── index.css                # global styles + Tailwind v4 @theme tokens
+│   └── vite-env.d.ts
+├── public/                      # static assets served verbatim
+│   └── 404.html                 # SPA fallback for GH Pages
+├── eslint.config.js
+├── .prettierrc.json
+├── .husky/                      # pre-commit hook
+├── .github/workflows/deploy.yml # CI: lint → format-check → test → build → deploy
+├── CLAUDE.md                    # this file
+└── README.md
+```
+
+A typical tool route folder looks like this:
+
+```
+src/routes/tools/MyTool/
+├── index.tsx          # route component, state owner, side-effect handlers
+├── Controls.tsx       # left-panel form (uses shared primitives)
+├── types.ts           # TypeScript types for the tool's data model
+├── *-logic.ts         # pure functions (testable, no React, no DOM)
+├── *.test.ts          # unit tests next to the modules they test
+└── mytool.css         # tool-specific visuals, rules nested under .mytool-route
+```
+
+## Adding a new tool route
+
+1. Create `src/routes/tools/MyTool/` mirroring the layout above. Use Greathelm or Warmaster as a reference.
+2. Register the route in `src/App.tsx`. **Path without trailing slash** (`/tools/my-tool`, not `/tools/my-tool/`) — see [Known gotchas](#known-gotchas).
+3. Add a navbar link in `src/components/Navbar.tsx`. Use `<Link>` (not `<a>`) since tools are internal React routes.
+4. Add a tool card on the landing page in `src/routes/Home.tsx`.
+5. Write unit tests for the pure logic in `*.test.ts` files next to the modules they test.
+6. Update the docs — `CLAUDE.md` (project-layout tree at minimum) and `README.md` (project-structure section, and the tagline if the tool is significant). See [Keep the docs in sync](#keep-the-docs-in-sync).
+
+## Design tokens and primitives
+
+**Use the shared UI components in `src/components/ui/`** before reaching for raw HTML elements or hand-rolled CSS:
+
+| Primitive                                               | Use for                                                   |
+| ------------------------------------------------------- | --------------------------------------------------------- |
+| `<Panel>`, `<PanelHead>`, `<PanelBody>`                 | Dark surface containers; pass `sticky` for sidebar panels |
+| `<Button variant="primary" \| "secondary" \| "danger">` | Full-width gradient button                                |
+| `<FormLabel htmlFor="...">`                             | Form field labels                                         |
+| `<TextInput>`, `<Select>`                               | Styled form fields                                        |
+| `<CheckboxRow checked={} onChange={}>`                  | Checkbox + label inline                                   |
+| `<Row>`                                                 | 2-column grid                                             |
+
+Design tokens (colors, surface shades, gradient stops) live in `src/index.css`'s `@theme` block. They are available both as CSS variables (`var(--color-accent)`) and as Tailwind utilities (`bg-accent`, `text-ink`, `border-line`).
+
+When adding **tool-specific visuals** (card backgrounds, SVG containers, parchment textures, etc.), put them in the tool's `*.css` file with all rules **nested under `.mytool-route`** via CSS nesting (supported natively by Tailwind v4's Lightning CSS). Do not add unscoped class rules — they leak across tools.
+
+## Quality gates
+
+**Local pre-commit hook** (`.husky/pre-commit`) runs on every `git commit`:
+
+- `lint-staged` → `eslint --fix` + `prettier --write` on staged files
+- `tsc -b` → project-wide typecheck
+
+The hook blocks the commit on failure. If a fix is genuinely needed and the hook is wrong, use `// eslint-disable-next-line <rule>` with a one-line justification — never `--no-verify`.
+
+**CI** (`.github/workflows/deploy.yml`) runs on every push to `main`:
+
+- `pnpm lint` → fails on any ESLint error
+- `pnpm format:check` → fails if any file isn't Prettier-formatted
+- `pnpm test` → fails if any Vitest test fails
+- `pnpm build` → fails on type errors or build errors (build runs `tsc -b && vite build`)
+- Deploys `dist/` to GitHub Pages on success
+
+Available scripts:
+
+```
+pnpm lint           # ESLint check
+pnpm lint:fix       # ESLint with auto-fix
+pnpm format         # Auto-format with Prettier
+pnpm format:check   # Check formatting without writing
+pnpm typecheck      # tsc -b
+pnpm test           # Run all Vitest tests once
+pnpm test:watch     # Watch mode
+pnpm dev            # Vite dev server (port 8000)
+pnpm build          # Production build
+pnpm preview        # Preview the production build locally
+```
+
+## Testing conventions
+
+- Unit tests live next to the modules they test, named `*.test.ts`.
+- Focus on **pure logic** — generators, data transformations, helpers. Skip React rendering tests and DOM interaction tests; the underlying bugs are usually caught more cheaply in pure-logic tests.
+- The seeded PRNG (`WarmasterMap/prng.ts`) makes map/card generation fully deterministic, so tests can assert exact outputs without flakiness.
+- Snapshot-style assertions should snapshot a **summary** of the output (item-type counts, labels, etc.), not full structures with floating-point positions — those make tests brittle to harmless refactors.
+
+## Known gotchas
+
+- **React Router v7 trailing slashes**: `<Route path="/foo/" />` (with trailing slash) silently breaks the entire `<Routes>` tree — no console error, no warning, just an empty render. Always declare paths without a trailing slash. Browser URLs ending in `/` already match no-slash routes via React Router's built-in normalization, so the defensive redirect route is both unnecessary and harmful.
+- **pnpm 11 + jspdf's `core-js` build script**: `pnpm-workspace.yaml` holds the build approval (`core-js: false`). Don't delete it or pnpm commands will refuse to run cleanly (the install loops on the unresolved build approval).
+- **html2canvas + jspdf are bundled, not CDN-loaded**: both are dynamically imported inside their export handlers so they don't bloat the initial bundle. Don't move them to top-level imports — that adds ~600 KB to the entry chunk.
+- **Vite dev server directory-index resolution**: `vite.config.ts` includes a `publicDirIndexFallback` middleware that lets directory URLs in `public/` (e.g. `/tools/foo/`) resolve to their `index.html` during dev. Production static hosts handle this natively, so the middleware is dev-only.
+- **Greathelm UI is currently in English**, in defiance of the Spanish language rule above. This is a known leftover from the original standalone HTML and is slated for translation. Do not treat it as a sanctioned pattern when writing new tool UIs — follow the language rule, not the precedent.
+
+## Keep the docs in sync
+
+`CLAUDE.md` and `README.md` describe the project as it currently is. When you change the project, update **both files in the same commit**:
+
+- **Added a new tool route?** Add it to the project-layout tree in `CLAUDE.md`. If the tool is significant (something visitors would notice), mention it in `README.md`'s tagline.
+- **Added a new non-tool route or major feature** (member list, event calendar, attendance tracker, OAuth login, Supabase-backed data, etc.)? Add it to the project-layout tree in `CLAUDE.md`. If it introduces new conventions (a data layer, a service module pattern, an auth context), add a dedicated subsection to `CLAUDE.md` so future sessions know to use it. Mention it in `README.md`'s tagline and/or tech-stack section if it's user-visible or changes the stack.
+- **Added a new shared primitive in `components/ui/`?** Add it to the primitives table in `CLAUDE.md`'s "Design tokens and primitives".
+- **Added or removed a `pnpm` script?** Update the script lists in both files.
+- **Hit a new silent-failure gotcha (the kind you'd want to warn the next session about)?** Add it to "Known gotchas" with a one-paragraph explanation.
+- **Changed a quality-gate behavior (new lint rule, new CI step, etc.)?** Update "Quality gates" in `CLAUDE.md` and the deployment paragraph in `README.md` if it's user-visible.
+- **Changed the tech stack (added a major dep, swapped routers, etc.)?** Update the tech-stack section in `README.md` and any affected sections in `CLAUDE.md`.
+
+A stale doc is worse than no doc — future AI sessions trust both as ground truth and will reproduce old patterns. If you remove or rename something, grep both files for references and update them. The pre-commit hook will not catch stale prose.
