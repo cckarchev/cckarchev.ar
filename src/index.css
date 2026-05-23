@@ -1,12 +1,35 @@
 @import 'tailwindcss';
 
 @theme {
+  /* Surfaces and ink */
   --color-bg: #160f0a;
-  --color-panel: #2a1712;
-  --color-panel-2: #3b2118;
+  --color-surface: #2a1712;
+  --color-surface-2: #3b2118;
   --color-ink: #f6ecd2;
   --color-muted: #d1b889;
+  --color-line: rgba(255, 221, 160, 0.22);
+
+  /* Accents */
   --color-accent: #d4aa52;
+  --color-danger: #9e2f22;
+
+  /* Form controls */
+  --color-input-bg: #170f0b;
+  --color-input-border: rgba(255, 221, 160, 0.28);
+  --color-input-text: #fff7e3;
+
+  /* Button gradient stops */
+  --color-btn-primary-from: #f4d98e;
+  --color-btn-primary-to: #b98228;
+  --color-btn-secondary-from: #d7d1c1;
+  --color-btn-secondary-to: #918b7e;
+  --color-btn-danger-from: #e99a78;
+  --color-btn-danger-to: #bd5739;
+  --color-btn-ink: #17130d;
+
+  /* Aliases kept for back-compat with classes that referenced the old names. */
+  --color-panel: var(--color-surface);
+  --color-panel-2: var(--color-surface-2);
 }
 
 html,

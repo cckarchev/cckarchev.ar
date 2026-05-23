@@ -1,20 +1,15 @@
 /*
  * Warmaster map generator — visual styles.
- * All rules nested under .warmaster-route so nothing leaks to the rest of the app.
+ * Only the tool-specific surfaces remain here (page header, map cards, SVG
+ * shell, legend). Shared chrome (panel, button, select, etc.) lives in the
+ * primitives at src/components/ui/.
  */
 
 .warmaster-route {
-  --w-panel: #2a1712;
-  --w-panel-2: #3b2118;
-  --w-ink: #f6ecd2;
-  --w-muted: #d1b889;
-  --w-accent: #d4aa52;
-  --w-danger: #9e2f22;
-  --w-line: rgba(255, 221, 160, 0.22);
   --w-paper: #f3ead5;
   --w-paper-ink: #201a12;
 
-  color: var(--w-ink);
+  color: var(--color-ink);
   font-family: Georgia, 'Times New Roman', serif;
   min-height: 100vh;
   min-width: 0;
@@ -48,7 +43,7 @@
 
     .subtitle {
       margin-top: 8px;
-      color: var(--w-muted);
+      color: var(--color-muted);
       max-width: 1040px;
       font-size: clamp(13px, 1.6vw, 15px);
       line-height: 1.35;
@@ -65,137 +60,6 @@
     max-width: 1800px;
     margin: 0 auto;
     min-width: 0;
-  }
-
-  .panel {
-    background:
-      linear-gradient(180deg, rgba(255, 228, 160, 0.07), rgba(0, 0, 0, 0.08)), var(--w-panel);
-    border: 1px solid var(--w-line);
-    border-radius: 18px;
-    box-shadow:
-      0 12px 30px rgba(0, 0, 0, 0.36),
-      inset 0 0 0 1px rgba(255, 220, 140, 0.08);
-    overflow: hidden;
-    min-width: 0;
-  }
-
-  .controls {
-    position: sticky;
-    top: 12px;
-    max-height: calc(100vh - 24px);
-    overflow: auto;
-    scrollbar-width: thin;
-  }
-
-  .panel-head {
-    padding: 16px 18px;
-    background: linear-gradient(90deg, rgba(105, 25, 18, 0.72), rgba(35, 15, 10, 0.88));
-    border-bottom: 1px solid var(--w-line);
-
-    h2 {
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #f8e7a8;
-      font-size: clamp(17px, 2vw, 21px);
-    }
-  }
-
-  .panel-body {
-    padding: 16px 18px;
-  }
-
-  label {
-    display: block;
-    margin: 12px 0 6px;
-    color: #f5dd9c;
-    font-weight: bold;
-    font-size: 14px;
-  }
-
-  select,
-  input[type='number'],
-  input[type='text'] {
-    width: 100%;
-    max-width: 100%;
-    padding: 10px 11px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 221, 160, 0.28);
-    background: #170f0b;
-    color: var(--w-ink);
-    font-size: 14px;
-    outline: none;
-    min-width: 0;
-  }
-
-  .row {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .checkbox-row {
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    margin: 12px 0;
-    color: var(--w-muted);
-    font-size: 13px;
-    line-height: 1.35;
-
-    input {
-      margin-top: 2px;
-      flex: 0 0 auto;
-    }
-  }
-
-  button {
-    border: 0;
-    border-radius: 12px;
-    padding: 11px 14px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #17130d;
-    background: linear-gradient(#f4d98e, #b98228);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.38),
-      0 4px 12px rgba(0, 0, 0, 0.28);
-    transition:
-      transform 0.08s ease,
-      filter 0.2s ease;
-    font-family: Georgia, 'Times New Roman', serif;
-    width: 100%;
-
-    &:hover {
-      filter: brightness(1.06);
-    }
-    &:active {
-      transform: translateY(1px);
-    }
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    &.secondary {
-      background: linear-gradient(#d7d1c1, #918b7e);
-    }
-    &.danger {
-      background: linear-gradient(#e99a78, #bd5739);
-    }
-  }
-
-  .button-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    margin-top: 16px;
-  }
-
-  .small-note {
-    color: var(--w-muted);
-    font-size: 12px;
-    line-height: 1.4;
-    margin-top: 12px;
   }
 
   .maps-wrap {
@@ -335,14 +199,6 @@
     white-space: nowrap;
   }
 
-  .export-tools {
-    display: grid;
-    gap: 10px;
-    margin-top: 12px;
-    border-top: 1px solid var(--w-line);
-    padding-top: 12px;
-  }
-
   .footer-note {
     color: #7a5f35;
     font-size: 11px;
@@ -367,14 +223,6 @@
   .warmaster-route main {
     grid-template-columns: 1fr;
     padding: 12px;
-  }
-  .warmaster-route .controls {
-    position: static;
-    max-height: none;
-    overflow: visible;
-  }
-  .warmaster-route .panel-body {
-    padding: 14px;
   }
   .warmaster-route .map-body {
     grid-template-columns: 1fr;
@@ -403,26 +251,8 @@
     padding: 8px;
     gap: 10px;
   }
-  .warmaster-route .panel,
   .warmaster-route .map-card {
     border-radius: 12px;
-  }
-  .warmaster-route .row,
-  .warmaster-route .button-grid {
-    grid-template-columns: 1fr;
-  }
-  .warmaster-route label {
-    margin-top: 10px;
-  }
-  .warmaster-route select,
-  .warmaster-route input[type='number'],
-  .warmaster-route input[type='text'],
-  .warmaster-route button {
-    min-height: 44px;
-    font-size: 15px;
-  }
-  .warmaster-route .checkbox-row {
-    font-size: 12px;
   }
   .warmaster-route .map-card-header {
     padding: 10px 12px;
@@ -463,7 +293,7 @@
     color: black;
   }
   .warmaster-route header,
-  .warmaster-route .controls {
+  .warmaster-route .cck-panel {
     display: none !important;
   }
   .warmaster-route main {

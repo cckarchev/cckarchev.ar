@@ -1,7 +1,10 @@
 /*
  * Greathelm card generator — visual styles.
- * Card uses physical cm units throughout to keep print output predictable.
- * All rules nested under .greathelm-route so nothing leaks to the rest of the app.
+ * Only the tool-specific surfaces remain here (the card itself, parchment
+ * background, hearts SVG, print sheet layout). Shared chrome (panel, button,
+ * select, etc.) lives in the primitives at src/components/ui/.
+ *
+ * The card uses physical cm units throughout to keep print output predictable.
  */
 
 @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=IM+Fell+English+SC&display=swap');
@@ -14,12 +17,6 @@
   --paper-b: #e2c98f;
   --paper-c: #b48d53;
   --black: #000;
-  --panel: #181510;
-  --panel-border: #5a482f;
-  --panel-text: #f4e8cd;
-  --gold: #c8a252;
-  --green: #2b9743;
-  --red: #b11724;
 
   display: grid;
   grid-template-columns: minmax(300px, 390px) minmax(0, 1fr);
@@ -30,103 +27,6 @@
 
   * {
     box-sizing: border-box;
-  }
-
-  .controls {
-    position: sticky;
-    top: 12px;
-    z-index: 10;
-    max-height: calc(100vh - 24px);
-    overflow: auto;
-    padding: 18px;
-    border: 1px solid var(--panel-border);
-    border-radius: 14px;
-    background: var(--panel);
-    color: var(--panel-text);
-    box-shadow: 0 10px 24px rgb(0 0 0 / 18%);
-
-    h1 {
-      margin: 0 0 14px;
-      color: #f6ead0;
-      font-size: 22px;
-    }
-
-    input[type='text'],
-    textarea,
-    select {
-      width: 100%;
-      padding: 9px 10px;
-      border: 1px solid #7c6440;
-      border-radius: 8px;
-      background: #241f18;
-      color: #fff7e3;
-      font: 14px var(--font-card);
-    }
-
-    textarea {
-      min-height: 68px;
-      resize: vertical;
-    }
-
-    input[type='file'] {
-      width: 100%;
-      color: #ead8ae;
-      font-family: var(--font-card);
-    }
-
-    button {
-      width: 100%;
-      margin-top: 12px;
-      padding: 11px 14px;
-      border: 0;
-      border-radius: 10px;
-      background: var(--gold);
-      color: #1d1408;
-      font: 700 15px var(--font-card);
-      cursor: pointer;
-
-      &.secondary-button {
-        background: #5a482f;
-        color: var(--panel-text);
-      }
-    }
-  }
-
-  .control-label {
-    display: block;
-    margin: 13px 0 6px;
-    color: #ead8ae;
-    font-size: 14px;
-  }
-
-  .control-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  .control-note {
-    margin: 6px 0 0;
-    color: #bfae8e;
-    font-size: 12px;
-    line-height: 1.25;
-  }
-
-  .check-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-top: 10px;
-
-    input {
-      width: 18px;
-      height: 18px;
-    }
-    label {
-      margin: 0;
-      color: #ead8ae;
-      font-size: 14px;
-    }
   }
 
   .workspace {
@@ -362,7 +262,7 @@
 
   .sheet-title {
     margin: 24px 0 12px;
-    color: var(--panel-text);
+    color: var(--color-ink);
     font-size: 20px;
   }
 
@@ -440,11 +340,6 @@
   .greathelm-route {
     grid-template-columns: 1fr;
 
-    .controls {
-      position: static;
-      max-height: none;
-    }
-
     .preview-area {
       overflow: hidden;
     }
@@ -461,7 +356,7 @@
     padding: 0;
     background: #fff;
 
-    .controls,
+    .cck-panel,
     .preview-area,
     .sheet-title {
       display: none;

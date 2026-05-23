@@ -1,4 +1,15 @@
 import type { ChangeEvent } from 'react'
+import {
+  Button,
+  CheckboxRow,
+  FormLabel,
+  Panel,
+  PanelBody,
+  PanelHead,
+  Row,
+  Select,
+  TextInput,
+} from '../../../components/ui'
 import { catalog } from './equipment'
 import { getLoadout } from './card-logic'
 import type { CardData, CardSize, LoadoutKind, SelectionKey, UnitType } from './types'
@@ -63,206 +74,182 @@ export default function ControlsForm({
   }
 
   return (
-    <form className="controls" onSubmit={(e) => e.preventDefault()}>
-      <h1>Greathelm Card Generator</h1>
-
-      <label className="control-label" htmlFor="unitName">
-        Name
-      </label>
-      <input
-        id="unitName"
-        type="text"
-        placeholder="Leave empty for handwriting"
-        value={data.name}
-        onChange={(e) => onChange({ name: e.target.value })}
-      />
-
-      <label className="control-label" htmlFor="armorSelect">
-        Armor
-      </label>
-      <ItemSelect
-        id="armorSelect"
-        items={catalog.armor}
-        value={data.armor}
-        onChange={(value) => onChange({ armor: value })}
-      />
-
-      <label className="control-label" htmlFor="weaponLoadout">
-        Weapon loadout
-      </label>
-      <select id="weaponLoadout" value={data.loadout} onChange={handleLoadoutChange}>
-        {LOADOUT_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-
-      {usesShield && (
-        <div>
-          <label className="control-label" htmlFor="shieldType">
-            Shield type
-          </label>
-          <ItemSelect
-            id="shieldType"
-            items={catalog.shields}
-            value={data.shieldType}
-            onChange={(value) => onChange({ shieldType: value })}
+    <Panel sticky>
+      <PanelHead>Greathelm Card Generator</PanelHead>
+      <PanelBody>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <FormLabel htmlFor="unitName">Name</FormLabel>
+          <TextInput
+            id="unitName"
+            placeholder="Leave empty for handwriting"
+            value={data.name}
+            onChange={(e) => onChange({ name: e.target.value })}
           />
-        </div>
-      )}
 
-      <div className="control-grid">
-        <div>
-          <label className="control-label" htmlFor="weaponPrimary">
-            Weapon 1
-          </label>
+          <FormLabel htmlFor="armorSelect">Armor</FormLabel>
           <ItemSelect
-            id="weaponPrimary"
-            items={weaponOptions}
-            value={data.weaponA}
-            onChange={(value) => onChange({ weaponA: value })}
+            id="armorSelect"
+            items={catalog.armor}
+            value={data.armor}
+            onChange={(value) => onChange({ armor: value })}
           />
-        </div>
-        {usesSecondWeapon && (
-          <div>
-            <label className="control-label" htmlFor="weaponSecondary">
-              Weapon 2
-            </label>
-            <ItemSelect
-              id="weaponSecondary"
-              items={catalog.oneHanded}
-              value={data.weaponB}
-              onChange={(value) => onChange({ weaponB: value })}
-            />
+
+          <FormLabel htmlFor="weaponLoadout">Weapon loadout</FormLabel>
+          <Select id="weaponLoadout" value={data.loadout} onChange={handleLoadoutChange}>
+            {LOADOUT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+
+          {usesShield && (
+            <div>
+              <FormLabel htmlFor="shieldType">Shield type</FormLabel>
+              <ItemSelect
+                id="shieldType"
+                items={catalog.shields}
+                value={data.shieldType}
+                onChange={(value) => onChange({ shieldType: value })}
+              />
+            </div>
+          )}
+
+          <Row>
+            <div>
+              <FormLabel htmlFor="weaponPrimary">Weapon 1</FormLabel>
+              <ItemSelect
+                id="weaponPrimary"
+                items={weaponOptions}
+                value={data.weaponA}
+                onChange={(value) => onChange({ weaponA: value })}
+              />
+            </div>
+            {usesSecondWeapon && (
+              <div>
+                <FormLabel htmlFor="weaponSecondary">Weapon 2</FormLabel>
+                <ItemSelect
+                  id="weaponSecondary"
+                  items={catalog.oneHanded}
+                  value={data.weaponB}
+                  onChange={(value) => onChange({ weaponB: value })}
+                />
+              </div>
+            )}
+          </Row>
+          <p className="mt-1.5 text-xs leading-snug text-muted">{loadout.note}</p>
+
+          <SelectionRow
+            id="wornItem"
+            label="Worn item"
+            items={catalog.items.worn}
+            value={data.selections.worn}
+            onChange={(v) => onSelectionChange('worn', v)}
+          />
+          <SelectionRow
+            id="useItem"
+            label="Use item"
+            items={catalog.items.use}
+            value={data.selections.use}
+            onChange={(v) => onSelectionChange('use', v)}
+          />
+          <SelectionRow
+            id="consumableItem"
+            label="Consumable item"
+            items={catalog.items.consumable}
+            value={data.selections.consumable}
+            onChange={(v) => onSelectionChange('consumable', v)}
+          />
+          <SelectionRow
+            id="weaponUpgrade"
+            label="Weapon upgrade"
+            items={catalog.items.weaponUpgrade}
+            value={data.selections.weaponUpgrade}
+            onChange={(v) => onSelectionChange('weaponUpgrade', v)}
+          />
+          <SelectionRow
+            id="armorUpgrade"
+            label="Armor upgrade"
+            items={catalog.items.armorUpgrade}
+            value={data.selections.armorUpgrade}
+            onChange={(v) => onSelectionChange('armorUpgrade', v)}
+          />
+          <SelectionRow
+            id="legendaryWorn"
+            label="Legendary worn item"
+            items={catalog.items.legendaryWorn}
+            value={data.selections.legendaryWorn}
+            onChange={(v) => onSelectionChange('legendaryWorn', v)}
+          />
+          <SelectionRow
+            id="legendaryUse"
+            label="Legendary use item"
+            items={catalog.items.legendaryUse}
+            value={data.selections.legendaryUse}
+            onChange={(v) => onSelectionChange('legendaryUse', v)}
+          />
+          <SelectionRow
+            id="legendaryArmor"
+            label="Legendary armor"
+            items={catalog.items.legendaryArmor}
+            value={data.selections.legendaryArmor}
+            onChange={(v) => onSelectionChange('legendaryArmor', v)}
+          />
+          <SelectionRow
+            id="legendaryWeaponUpgrade"
+            label="Legendary weapon upgrade"
+            items={catalog.items.legendaryWeaponUpgrade}
+            value={data.selections.legendaryWeaponUpgrade}
+            onChange={(v) => onSelectionChange('legendaryWeaponUpgrade', v)}
+          />
+
+          <CheckboxRow checked={data.showHearts} onChange={(v) => onChange({ showHearts: v })}>
+            Show hearts
+          </CheckboxRow>
+
+          <FormLabel htmlFor="unitType">Unit type</FormLabel>
+          <Select
+            id="unitType"
+            value={data.unitType}
+            disabled={!data.showHearts}
+            onChange={(e) => onChange({ unitType: e.target.value as UnitType })}
+          >
+            {UNIT_TYPE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+
+          <FormLabel htmlFor="cardSize">Card size</FormLabel>
+          <Select
+            id="cardSize"
+            value={data.cardSize}
+            onChange={(e) => onChange({ cardSize: e.target.value as CardSize })}
+          >
+            {CARD_SIZE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+
+          <FormLabel htmlFor="modelImage">Upload model image</FormLabel>
+          <TextInput id="modelImage" type="file" accept="image/*" onChange={handleImageChange} />
+
+          <div className="mt-3 grid gap-2.5">
+            <Button onClick={onAddToSheet}>Add card to print sheet</Button>
+            <Button onClick={onExportPng} disabled={exporting}>
+              {exporting ? 'Exporting…' : 'Export current card as PNG'}
+            </Button>
+            <Button onClick={() => window.print()}>Print / Save as PDF</Button>
+            <Button variant="secondary" onClick={onClearSheet}>
+              Clear print sheet
+            </Button>
           </div>
-        )}
-      </div>
-      <p className="control-note">{loadout.note}</p>
-
-      <SelectionRow
-        id="wornItem"
-        label="Worn item"
-        items={catalog.items.worn}
-        value={data.selections.worn}
-        onChange={(v) => onSelectionChange('worn', v)}
-      />
-      <SelectionRow
-        id="useItem"
-        label="Use item"
-        items={catalog.items.use}
-        value={data.selections.use}
-        onChange={(v) => onSelectionChange('use', v)}
-      />
-      <SelectionRow
-        id="consumableItem"
-        label="Consumable item"
-        items={catalog.items.consumable}
-        value={data.selections.consumable}
-        onChange={(v) => onSelectionChange('consumable', v)}
-      />
-      <SelectionRow
-        id="weaponUpgrade"
-        label="Weapon upgrade"
-        items={catalog.items.weaponUpgrade}
-        value={data.selections.weaponUpgrade}
-        onChange={(v) => onSelectionChange('weaponUpgrade', v)}
-      />
-      <SelectionRow
-        id="armorUpgrade"
-        label="Armor upgrade"
-        items={catalog.items.armorUpgrade}
-        value={data.selections.armorUpgrade}
-        onChange={(v) => onSelectionChange('armorUpgrade', v)}
-      />
-      <SelectionRow
-        id="legendaryWorn"
-        label="Legendary worn item"
-        items={catalog.items.legendaryWorn}
-        value={data.selections.legendaryWorn}
-        onChange={(v) => onSelectionChange('legendaryWorn', v)}
-      />
-      <SelectionRow
-        id="legendaryUse"
-        label="Legendary use item"
-        items={catalog.items.legendaryUse}
-        value={data.selections.legendaryUse}
-        onChange={(v) => onSelectionChange('legendaryUse', v)}
-      />
-      <SelectionRow
-        id="legendaryArmor"
-        label="Legendary armor"
-        items={catalog.items.legendaryArmor}
-        value={data.selections.legendaryArmor}
-        onChange={(v) => onSelectionChange('legendaryArmor', v)}
-      />
-      <SelectionRow
-        id="legendaryWeaponUpgrade"
-        label="Legendary weapon upgrade"
-        items={catalog.items.legendaryWeaponUpgrade}
-        value={data.selections.legendaryWeaponUpgrade}
-        onChange={(v) => onSelectionChange('legendaryWeaponUpgrade', v)}
-      />
-
-      <div className="check-row">
-        <input
-          id="showHearts"
-          type="checkbox"
-          checked={data.showHearts}
-          onChange={(e) => onChange({ showHearts: e.target.checked })}
-        />
-        <label htmlFor="showHearts">Show hearts</label>
-      </div>
-
-      <label className="control-label" htmlFor="unitType">
-        Unit type
-      </label>
-      <select
-        id="unitType"
-        value={data.unitType}
-        disabled={!data.showHearts}
-        onChange={(e) => onChange({ unitType: e.target.value as UnitType })}
-      >
-        {UNIT_TYPE_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-
-      <label className="control-label" htmlFor="cardSize">
-        Card size
-      </label>
-      <select
-        id="cardSize"
-        value={data.cardSize}
-        onChange={(e) => onChange({ cardSize: e.target.value as CardSize })}
-      >
-        {CARD_SIZE_OPTIONS.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-
-      <label className="control-label" htmlFor="modelImage">
-        Upload model image
-      </label>
-      <input id="modelImage" type="file" accept="image/*" onChange={handleImageChange} />
-
-      <button type="button" onClick={onAddToSheet}>
-        Add card to print sheet
-      </button>
-      <button type="button" onClick={onExportPng} disabled={exporting}>
-        {exporting ? 'Exporting…' : 'Export current card as PNG'}
-      </button>
-      <button type="button" onClick={() => window.print()}>
-        Print / Save as PDF
-      </button>
-      <button type="button" onClick={onClearSheet} className="secondary-button">
-        Clear print sheet
-      </button>
-    </form>
+        </form>
+      </PanelBody>
+    </Panel>
   )
 }
 
@@ -278,13 +265,13 @@ function ItemSelect({
   onChange: (value: string) => void
 }) {
   return (
-    <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
+    <Select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
       {items.map((item) => (
         <option key={item.id} value={item.id}>
           {item.name}
         </option>
       ))}
-    </select>
+    </Select>
   )
 }
 
@@ -303,17 +290,15 @@ function SelectionRow({
 }) {
   return (
     <>
-      <label className="control-label" htmlFor={id}>
-        {label}
-      </label>
-      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
+      <FormLabel htmlFor={id}>{label}</FormLabel>
+      <Select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
         <option value="">None</option>
         {items.map((item) => (
           <option key={item.id} value={item.id}>
             {item.name}
           </option>
         ))}
-      </select>
+      </Select>
     </>
   )
 }

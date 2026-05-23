@@ -1,4 +1,15 @@
 import type { ChangeEvent } from 'react'
+import {
+  Button,
+  CheckboxRow,
+  FormLabel,
+  Panel,
+  PanelBody,
+  PanelHead,
+  Row,
+  Select,
+  TextInput,
+} from '../../../components/ui'
 import type {
   Density,
   GenerationConfig,
@@ -90,13 +101,11 @@ export default function Controls({
   }
 
   return (
-    <section className="panel controls">
-      <div className="panel-head">
-        <h2>Battlefield Setup</h2>
-      </div>
-      <div className="panel-body">
-        <label htmlFor="tableSize">Table size</label>
-        <select
+    <Panel sticky>
+      <PanelHead>Battlefield Setup</PanelHead>
+      <PanelBody>
+        <FormLabel htmlFor="tableSize">Table size</FormLabel>
+        <Select
           id="tableSize"
           value={config.tableSize}
           onChange={(e) => onConfigChange({ tableSize: e.target.value })}
@@ -106,10 +115,10 @@ export default function Controls({
               {o.label}
             </option>
           ))}
-        </select>
+        </Select>
 
-        <label htmlFor="theme">Theme</label>
-        <select
+        <FormLabel htmlFor="theme">Theme</FormLabel>
+        <Select
           id="theme"
           value={config.theme}
           onChange={(e) => onConfigChange({ theme: e.target.value as ThemeKey })}
@@ -119,10 +128,10 @@ export default function Controls({
               {o.label}
             </option>
           ))}
-        </select>
+        </Select>
 
-        <label htmlFor="mission">Mission</label>
-        <select
+        <FormLabel htmlFor="mission">Mission</FormLabel>
+        <Select
           id="mission"
           value={config.mission}
           onChange={(e) => onConfigChange({ mission: e.target.value as MissionKey })}
@@ -132,12 +141,12 @@ export default function Controls({
               {o.label}
             </option>
           ))}
-        </select>
+        </Select>
 
-        <div className="row">
+        <Row>
           <div>
-            <label htmlFor="density">Terrain density</label>
-            <select
+            <FormLabel htmlFor="density">Terrain density</FormLabel>
+            <Select
               id="density"
               value={config.density}
               onChange={(e) => onConfigChange({ density: e.target.value as Density })}
@@ -147,11 +156,11 @@ export default function Controls({
                   {o.label}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div>
-            <label htmlFor="mapsCount">Maps</label>
-            <input
+            <FormLabel htmlFor="mapsCount">Maps</FormLabel>
+            <TextInput
               id="mapsCount"
               type="number"
               min={1}
@@ -160,10 +169,10 @@ export default function Controls({
               onChange={handleMapsCount}
             />
           </div>
-        </div>
+        </Row>
 
-        <label htmlFor="playStyle">Table style</label>
-        <select
+        <FormLabel htmlFor="playStyle">Table style</FormLabel>
+        <Select
           id="playStyle"
           value={config.playStyle}
           onChange={(e) => onConfigChange({ playStyle: e.target.value as PlayStyle })}
@@ -173,10 +182,10 @@ export default function Controls({
               {o.label}
             </option>
           ))}
-        </select>
+        </Select>
 
-        <label htmlFor="waterRarity">Water features</label>
-        <select
+        <FormLabel htmlFor="waterRarity">Water features</FormLabel>
+        <Select
           id="waterRarity"
           value={config.waterRarity}
           onChange={(e) => onConfigChange({ waterRarity: e.target.value as WaterRarity })}
@@ -186,10 +195,10 @@ export default function Controls({
               {o.label}
             </option>
           ))}
-        </select>
+        </Select>
 
-        <label htmlFor="seed">Seed</label>
-        <input
+        <FormLabel htmlFor="seed">Seed</FormLabel>
+        <TextInput
           id="seed"
           type="text"
           placeholder="Leave empty for random"
@@ -197,54 +206,36 @@ export default function Controls({
           onChange={(e) => onConfigChange({ seed: e.target.value })}
         />
 
-        <div className="checkbox-row">
-          <input
-            id="fairMode"
-            type="checkbox"
-            checked={config.fairMode}
-            onChange={(e) => onConfigChange({ fairMode: e.target.checked })}
-          />
-          <label htmlFor="fairMode">
-            <strong>Competitive balance mode:</strong> uses semi-symmetrical placement, preserves
-            cavalry lanes, avoids deployment traps, and applies mission exclusion zones.
-          </label>
-        </div>
+        <CheckboxRow checked={config.fairMode} onChange={(v) => onConfigChange({ fairMode: v })}>
+          <strong>Competitive balance mode:</strong> uses semi-symmetrical placement, preserves
+          cavalry lanes, avoids deployment traps, and applies mission exclusion zones.
+        </CheckboxRow>
 
-        <div className="checkbox-row">
-          <input
-            id="showGrid"
-            type="checkbox"
-            checked={renderOptions.showGrid}
-            onChange={(e) => onRenderOptionsChange({ showGrid: e.target.checked })}
-          />
-          <label htmlFor="showGrid">Show 10 cm grid and scale marks.</label>
-        </div>
+        <CheckboxRow
+          checked={renderOptions.showGrid}
+          onChange={(v) => onRenderOptionsChange({ showGrid: v })}
+        >
+          Show 10 cm grid and scale marks.
+        </CheckboxRow>
 
-        <div className="checkbox-row">
-          <input
-            id="showObjectiveOverlay"
-            type="checkbox"
-            checked={renderOptions.showObjectiveOverlay}
-            onChange={(e) => onRenderOptionsChange({ showObjectiveOverlay: e.target.checked })}
-          />
-          <label htmlFor="showObjectiveOverlay">
-            Show objective validation overlay when relevant: 10 cm grid, objective zones, 5 cm
-            terrain buffer and 30 cm spacing guides.
-          </label>
-        </div>
+        <CheckboxRow
+          checked={renderOptions.showObjectiveOverlay}
+          onChange={(v) => onRenderOptionsChange({ showObjectiveOverlay: v })}
+        >
+          Show objective validation overlay when relevant: 10 cm grid, objective zones, 5 cm terrain
+          buffer and 30 cm spacing guides.
+        </CheckboxRow>
 
-        <div className="button-grid">
-          <button type="button" onClick={onGenerate}>
-            Generate
-          </button>
-          <button type="button" className="secondary" onClick={onReroll}>
+        <Row className="mt-4">
+          <Button onClick={onGenerate}>Generate</Button>
+          <Button variant="secondary" onClick={onReroll}>
             Reroll Seed
-          </button>
-        </div>
+          </Button>
+        </Row>
 
-        <div className="export-tools">
-          <label htmlFor="pdfMode">PDF export mode</label>
-          <select
+        <div className="mt-3 grid gap-2.5 border-t border-line pt-3">
+          <FormLabel htmlFor="pdfMode">PDF export mode</FormLabel>
+          <Select
             id="pdfMode"
             value={pdfMode}
             onChange={(e) => onPdfModeChange(e.target.value as PdfMode)}
@@ -254,18 +245,18 @@ export default function Controls({
                 {o.label}
               </option>
             ))}
-          </select>
-          <button type="button" onClick={onExportPdf} disabled={exporting}>
+          </Select>
+          <Button onClick={onExportPdf} disabled={exporting}>
             {exporting ? 'Exporting…' : 'Export PDF'}
-          </button>
+          </Button>
         </div>
 
-        <div className="small-note">
+        <p className="mt-3 text-xs leading-snug text-muted">
           Terrain uses Warmaster Revolution assumptions: clear footprints first, rules tags second.
           The default style follows clean battle-report logic: readable terrain, preserved
           battlelines, subtle roads, rare water, and objectives validated against the 10 cm grid.
-        </div>
-      </div>
-    </section>
+        </p>
+      </PanelBody>
+    </Panel>
   )
 }

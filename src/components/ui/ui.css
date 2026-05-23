@@ -1,0 +1,136 @@
+/*
+ * Shared UI primitives — chrome styles for Panel, Button, form fields.
+ * Tokens come from src/index.css (@theme block).
+ */
+
+.cck-panel {
+  background:
+    linear-gradient(180deg, rgba(255, 228, 160, 0.07), rgba(0, 0, 0, 0.08)), var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 18px;
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.36),
+    inset 0 0 0 1px rgba(255, 220, 140, 0.08);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.cck-panel--sticky {
+  position: sticky;
+  top: 12px;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.cck-panel-head {
+  padding: 16px 18px;
+  background: linear-gradient(90deg, rgba(105, 25, 18, 0.72), rgba(35, 15, 10, 0.88));
+  border-bottom: 1px solid var(--color-line);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f8e7a8;
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: bold;
+  margin: 0;
+}
+
+.cck-panel-body {
+  padding: 16px 18px;
+}
+
+.cck-label {
+  display: block;
+  margin: 12px 0 6px;
+  color: #f5dd9c;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.cck-input {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--color-input-border);
+  background: var(--color-input-bg);
+  color: var(--color-input-text);
+  font-size: 14px;
+  outline: none;
+  min-width: 0;
+  font-family: inherit;
+}
+
+.cck-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cck-checkbox-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 12px 0;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.cck-checkbox-row input {
+  margin-top: 2px;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+}
+
+.cck-checkbox-row label {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 13px;
+  font-weight: normal;
+}
+
+.cck-button {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--color-btn-ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    0 4px 12px rgba(0, 0, 0, 0.28);
+  transition:
+    transform 0.08s ease,
+    filter 0.2s ease;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.cck-button:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+.cck-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.cck-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cck-button--primary {
+  background: linear-gradient(var(--color-btn-primary-from), var(--color-btn-primary-to));
+}
+.cck-button--secondary {
+  background: linear-gradient(var(--color-btn-secondary-from), var(--color-btn-secondary-to));
+}
+.cck-button--danger {
+  background: linear-gradient(var(--color-btn-danger-from), var(--color-btn-danger-to));
+}
+
+.cck-row-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
