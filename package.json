@@ -11,6 +11,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc -b",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -49,6 +51,7 @@
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.4",
-    "vite": "^8.0.14"
+    "vite": "^8.0.14",
+    "vitest": "^4.1.7"
   }
 }
