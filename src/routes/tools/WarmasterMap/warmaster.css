@@ -6,8 +6,8 @@
  */
 
 .warmaster-route {
-  --w-paper: #f3ead5;
-  --w-paper-ink: #201a12;
+  --map-paper: #f3ead5;
+  --map-paper-ink: #201a12;
 
   color: var(--color-ink);
   font-family: Georgia, 'Times New Roman', serif;
@@ -69,8 +69,8 @@
   }
 
   .map-card {
-    background: var(--w-paper);
-    color: var(--w-paper-ink);
+    background: var(--map-paper);
+    color: var(--map-paper-ink);
     border-radius: 18px;
     border: 1px solid #d4c29d;
     overflow: hidden;

@@ -10,20 +10,19 @@
 @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=IM+Fell+English+SC&display=swap');
 
 .greathelm-route {
-  --font-card: 'MedievalSharp', 'IM Fell English SC', Georgia, serif;
-  --ink: #1d160d;
-  --ink-light: rgba(29, 22, 13, 0.48);
-  --paper-a: #f0dfb4;
-  --paper-b: #e2c98f;
-  --paper-c: #b48d53;
-  --black: #000;
+  --card-font: 'MedievalSharp', 'IM Fell English SC', Georgia, serif;
+  --card-ink: #1d160d;
+  --card-ink-light: rgba(29, 22, 13, 0.48);
+  --card-paper-a: #f0dfb4;
+  --card-paper-b: #e2c98f;
+  --card-paper-c: #b48d53;
 
   display: grid;
   grid-template-columns: minmax(300px, 390px) minmax(0, 1fr);
   gap: clamp(12px, 2vw, 24px);
   align-items: start;
   padding: clamp(10px, 2vw, 24px);
-  font-family: var(--font-card);
+  font-family: var(--card-font);
 
   * {
     box-sizing: border-box;
@@ -57,9 +56,9 @@
     padding: 0.18cm;
     overflow: hidden;
     border-radius: 0.24cm;
-    background: var(--black);
+    background: #000;
     box-shadow: 0 10px 26px rgb(0 0 0 / 25%);
-    font-family: var(--font-card);
+    font-family: var(--card-font);
 
     &.is-poker {
       width: 8.89cm;
@@ -73,9 +72,9 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    border: 2px solid var(--black);
+    border: 2px solid #000;
     border-radius: 0.2cm;
-    background: var(--paper-b);
+    background: var(--card-paper-b);
   }
 
   .panel {
@@ -98,7 +97,7 @@
       repeating-linear-gradient(9deg, rgb(73 47 19 / 6%) 0 1px, transparent 1px 7px),
       repeating-linear-gradient(103deg, rgb(255 247 219 / 6%) 0 1px, transparent 1px 11px),
       repeating-radial-gradient(circle at 18% 24%, rgb(49 30 10 / 10%) 0 1px, transparent 1px 5px),
-      linear-gradient(135deg, var(--paper-a), var(--paper-b) 55%, var(--paper-c));
+      linear-gradient(135deg, var(--card-paper-a), var(--card-paper-b) 55%, var(--card-paper-c));
 
     &::before {
       content: '';
@@ -117,8 +116,8 @@
 
   .card-info {
     padding: 0.25cm 0.28cm 0.22cm 0.34cm;
-    border-right: 3px solid var(--black);
-    color: var(--ink);
+    border-right: 3px solid #000;
+    color: var(--card-ink);
   }
 
   .name-row {
@@ -140,7 +139,7 @@
   .name-value {
     min-height: 0.38cm;
     padding-top: 0.02cm;
-    border-bottom: 2.2px solid var(--ink);
+    border-bottom: 2.2px solid var(--card-ink);
     font-size: 0.39cm;
     font-weight: 700;
     line-height: 1.02;
@@ -189,7 +188,7 @@
   .write-line {
     width: 100%;
     height: 0.3cm;
-    border-bottom: 1.1px dotted var(--ink-light);
+    border-bottom: 1.1px dotted var(--card-ink-light);
   }
 
   .card-portrait {

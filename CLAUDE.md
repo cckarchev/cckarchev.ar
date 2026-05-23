@@ -81,6 +81,8 @@ Design tokens (colors, surface shades, gradient stops) live in `src/index.css`'s
 
 When adding **tool-specific visuals** (card backgrounds, SVG containers, parchment textures, etc.), put them in the tool's `*.css` file with all rules **nested under `.mytool-route`** via CSS nesting (supported natively by Tailwind v4's Lightning CSS). Do not add unscoped class rules — they leak across tools.
 
+Tool-scoped CSS variables should use a **semantic prefix that describes what they represent** (the artifact, not the tool letter), e.g. `--card-ink` and `--card-paper-*` in Greathelm, `--map-paper` and `--map-paper-ink` in Warmaster. Avoid plain `--ink` or `--paper` — they shadow the global `--color-*` tokens and confuse readers. Avoid `--g-*` or `--w-*` letter prefixes too — they're arbitrary and don't convey meaning.
+
 ## Quality gates
 
 **Local pre-commit hook** (`.husky/pre-commit`) runs on every `git commit`:
