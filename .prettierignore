@@ -1,0 +1,6 @@
+node_modules
+dist
+.husky
+public
+pnpm-lock.yaml
+*.tsbuildinfo

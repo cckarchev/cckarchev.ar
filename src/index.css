@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-bg: #160f0a;
@@ -9,9 +9,10 @@
   --color-accent: #d4aa52;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   background-color: var(--color-bg);
   color: var(--color-ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }

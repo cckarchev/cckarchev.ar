@@ -7,9 +7,7 @@ export default function Home() {
         <h1 className="text-4xl tracking-wider text-accent mb-2 font-normal">
           Centro Cultural Karchev
         </h1>
-        <p className="text-muted text-lg m-0">
-          Herramientas y recursos para el club de juegos
-        </p>
+        <p className="text-muted text-lg m-0">Herramientas y recursos para el club de juegos</p>
       </section>
 
       <section>
@@ -21,9 +19,7 @@ export default function Home() {
             to="/tools/warmaster-map"
             className="block bg-panel border border-accent/20 rounded-lg p-5 no-underline text-inherit hover:border-accent hover:bg-panel-2 hover:-translate-y-0.5 transition"
           >
-            <h3 className="text-accent text-lg mb-1.5 font-semibold">
-              Warmaster Maps
-            </h3>
+            <h3 className="text-accent text-lg mb-1.5 font-semibold">Warmaster Maps</h3>
             <p className="text-muted text-sm m-0">
               Generador de campos de batalla para Warmaster Revolution.
             </p>
@@ -32,9 +28,7 @@ export default function Home() {
             to="/tools/greathelm-cards"
             className="block bg-panel border border-accent/20 rounded-lg p-5 no-underline text-inherit hover:border-accent hover:bg-panel-2 hover:-translate-y-0.5 transition"
           >
-            <h3 className="text-accent text-lg mb-1.5 font-semibold">
-              Greathelm Cards
-            </h3>
+            <h3 className="text-accent text-lg mb-1.5 font-semibold">Greathelm Cards</h3>
             <p className="text-muted text-sm m-0">
               Generador de cartas de unidades para Greathelm.
             </p>

@@ -23,14 +23,14 @@ type Props = {
   onExportPdf: () => void
 }
 
-const TABLE_SIZES: Array<{ value: string; label: string }> = [
+const TABLE_SIZES: { value: string; label: string }[] = [
   { value: '90x90', label: '90 × 90 cm / 3 × 3 ft' },
   { value: '120x120', label: '120 × 120 cm / 4 × 4 ft' },
   { value: '150x120', label: '120 × 150 cm / 4 × 5 ft' },
   { value: '180x120', label: '120 × 180 cm / 4 × 6 ft' },
 ]
 
-const THEME_OPTIONS: Array<{ value: ThemeKey; label: string }> = [
+const THEME_OPTIONS: { value: ThemeKey; label: string }[] = [
   { value: 'imperial', label: 'Imperial / Human lands' },
   { value: 'wildlands', label: 'Forest / Wildlands' },
   { value: 'chaos', label: 'Chaos lands' },
@@ -38,7 +38,7 @@ const THEME_OPTIONS: Array<{ value: ThemeKey; label: string }> = [
   { value: 'desert', label: 'Desert / Araby / Nehekhara' },
 ]
 
-const MISSION_OPTIONS: Array<{ value: MissionKey; label: string }> = [
+const MISSION_OPTIONS: { value: MissionKey; label: string }[] = [
   { value: 'agnostic', label: 'Mission agnostic / Pitched battle' },
   { value: 'takeHold', label: 'Take and Hold' },
   { value: 'tower', label: 'Battle for the Tower' },
@@ -48,26 +48,26 @@ const MISSION_OPTIONS: Array<{ value: MissionKey; label: string }> = [
   { value: 'watchtower', label: 'Siege: The Watchtower' },
 ]
 
-const DENSITY_OPTIONS: Array<{ value: Density; label: string }> = [
+const DENSITY_OPTIONS: { value: Density; label: string }[] = [
   { value: 'light', label: 'Light' },
   { value: 'standard', label: 'Standard' },
   { value: 'dense', label: 'Dense' },
 ]
 
-const PLAY_STYLE_OPTIONS: Array<{ value: PlayStyle; label: string }> = [
+const PLAY_STYLE_OPTIONS: { value: PlayStyle; label: string }[] = [
   { value: 'clear', label: 'Battle report / clear play' },
   { value: 'competitive', label: 'Tournament / competitive' },
   { value: 'narrative', label: 'Narrative / scenic' },
 ]
 
-const WATER_OPTIONS: Array<{ value: WaterRarity; label: string }> = [
+const WATER_OPTIONS: { value: WaterRarity; label: string }[] = [
   { value: 'rare', label: 'Rare / only when useful' },
   { value: 'normal', label: 'Normal' },
   { value: 'none', label: 'No rivers or streams' },
   { value: 'scenic', label: 'Scenic / more likely' },
 ]
 
-const PDF_MODE_OPTIONS: Array<{ value: PdfMode; label: string }> = [
+const PDF_MODE_OPTIONS: { value: PdfMode; label: string }[] = [
   { value: 'onePage', label: 'Put all maps on one PDF page if possible' },
   { value: 'separate', label: 'Each map on a separate PDF page' },
 ]
@@ -205,8 +205,8 @@ export default function Controls({
             onChange={(e) => onConfigChange({ fairMode: e.target.checked })}
           />
           <label htmlFor="fairMode">
-            <strong>Competitive balance mode:</strong> uses semi-symmetrical placement, preserves cavalry
-            lanes, avoids deployment traps, and applies mission exclusion zones.
+            <strong>Competitive balance mode:</strong> uses semi-symmetrical placement, preserves
+            cavalry lanes, avoids deployment traps, and applies mission exclusion zones.
           </label>
         </div>
 
@@ -228,8 +228,8 @@ export default function Controls({
             onChange={(e) => onRenderOptionsChange({ showObjectiveOverlay: e.target.checked })}
           />
           <label htmlFor="showObjectiveOverlay">
-            Show objective validation overlay when relevant: 10 cm grid, objective zones, 5 cm terrain
-            buffer and 30 cm spacing guides.
+            Show objective validation overlay when relevant: 10 cm grid, objective zones, 5 cm
+            terrain buffer and 30 cm spacing guides.
           </label>
         </div>
 
@@ -244,7 +244,11 @@ export default function Controls({
 
         <div className="export-tools">
           <label htmlFor="pdfMode">PDF export mode</label>
-          <select id="pdfMode" value={pdfMode} onChange={(e) => onPdfModeChange(e.target.value as PdfMode)}>
+          <select
+            id="pdfMode"
+            value={pdfMode}
+            onChange={(e) => onPdfModeChange(e.target.value as PdfMode)}
+          >
             {PDF_MODE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
@@ -257,9 +261,9 @@ export default function Controls({
         </div>
 
         <div className="small-note">
-          Terrain uses Warmaster Revolution assumptions: clear footprints first, rules tags second. The
-          default style follows clean battle-report logic: readable terrain, preserved battlelines, subtle
-          roads, rare water, and objectives validated against the 10 cm grid.
+          Terrain uses Warmaster Revolution assumptions: clear footprints first, rules tags second.
+          The default style follows clean battle-report logic: readable terrain, preserved
+          battlelines, subtle roads, rare water, and objectives validated against the 10 cm grid.
         </div>
       </div>
     </section>

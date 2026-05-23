@@ -4,10 +4,10 @@
  * All rules nested under .greathelm-route so nothing leaks to the rest of the app.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=MedievalSharp&family=IM+Fell+English+SC&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=IM+Fell+English+SC&display=swap');
 
 .greathelm-route {
-  --font-card: "MedievalSharp", "IM Fell English SC", Georgia, serif;
+  --font-card: 'MedievalSharp', 'IM Fell English SC', Georgia, serif;
   --ink: #1d160d;
   --ink-light: rgba(29, 22, 13, 0.48);
   --paper-a: #f0dfb4;
@@ -28,7 +28,9 @@
   padding: clamp(10px, 2vw, 24px);
   font-family: var(--font-card);
 
-  * { box-sizing: border-box; }
+  * {
+    box-sizing: border-box;
+  }
 
   .controls {
     position: sticky;
@@ -49,7 +51,7 @@
       font-size: 22px;
     }
 
-    input[type="text"],
+    input[type='text'],
     textarea,
     select {
       width: 100%;
@@ -66,7 +68,7 @@
       resize: vertical;
     }
 
-    input[type="file"] {
+    input[type='file'] {
       width: 100%;
       color: #ead8ae;
       font-family: var(--font-card);
@@ -116,8 +118,15 @@
     align-items: center;
     margin-top: 10px;
 
-    input { width: 18px; height: 18px; }
-    label { margin: 0; color: #ead8ae; font-size: 14px; }
+    input {
+      width: 18px;
+      height: 18px;
+    }
+    label {
+      margin: 0;
+      color: #ead8ae;
+      font-size: 14px;
+    }
   }
 
   .workspace {
@@ -145,9 +154,9 @@
     width: 12cm;
     height: 7cm;
     flex: 0 0 auto;
-    padding: .18cm;
+    padding: 0.18cm;
     overflow: hidden;
-    border-radius: .24cm;
+    border-radius: 0.24cm;
     background: var(--black);
     box-shadow: 0 10px 26px rgb(0 0 0 / 25%);
     font-family: var(--font-card);
@@ -165,7 +174,7 @@
     height: 100%;
     overflow: hidden;
     border: 2px solid var(--black);
-    border-radius: .20cm;
+    border-radius: 0.2cm;
     background: var(--paper-b);
   }
 
@@ -192,12 +201,12 @@
       linear-gradient(135deg, var(--paper-a), var(--paper-b) 55%, var(--paper-c));
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      opacity: .65;
+      opacity: 0.65;
       mix-blend-mode: multiply;
       background:
         radial-gradient(circle at 8% 8%, rgb(80 45 14 / 18%) 0 1px, transparent 2px),
@@ -207,7 +216,7 @@
   }
 
   .card-info {
-    padding: .25cm .28cm .22cm .34cm;
+    padding: 0.25cm 0.28cm 0.22cm 0.34cm;
     border-right: 3px solid var(--black);
     color: var(--ink);
   }
@@ -215,24 +224,24 @@
   .name-row {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: .16cm;
+    gap: 0.16cm;
     align-items: end;
-    margin-bottom: .10cm;
+    margin-bottom: 0.1cm;
   }
 
   .name-label {
-    font-size: .30cm;
+    font-size: 0.3cm;
     font-weight: 700;
     line-height: 1;
     text-transform: uppercase;
-    letter-spacing: .04em;
+    letter-spacing: 0.04em;
   }
 
   .name-value {
-    min-height: .38cm;
-    padding-top: .02cm;
+    min-height: 0.38cm;
+    padding-top: 0.02cm;
     border-bottom: 2.2px solid var(--ink);
-    font-size: .39cm;
+    font-size: 0.39cm;
     font-weight: 700;
     line-height: 1.02;
   }
@@ -240,8 +249,8 @@
   .equipment-list {
     display: grid;
     grid-template-rows: 1.25fr 1fr 1.15fr;
-    row-gap: .09cm;
-    height: calc(100% - .50cm);
+    row-gap: 0.09cm;
+    height: calc(100% - 0.5cm);
   }
 
   .field {
@@ -250,34 +259,42 @@
   }
 
   .field-header {
-    margin-bottom: .05cm;
-    font-size: .31cm;
+    margin-bottom: 0.05cm;
+    font-size: 0.31cm;
     font-weight: 700;
     line-height: 1;
   }
 
   .field-body {
-    font-size: .235cm;
+    font-size: 0.235cm;
     line-height: 1.14;
   }
 
   .field-item {
-    margin-bottom: .035cm;
+    margin-bottom: 0.035cm;
 
-    strong { font-size: .255cm; }
+    strong {
+      font-size: 0.255cm;
+    }
   }
 
-  .rule-text { opacity: .93; }
+  .rule-text {
+    opacity: 0.93;
+  }
 
-  .write-line-wrap { margin-top: .16cm; }
+  .write-line-wrap {
+    margin-top: 0.16cm;
+  }
 
   .write-line {
     width: 100%;
-    height: .30cm;
+    height: 0.3cm;
     border-bottom: 1.1px dotted var(--ink-light);
   }
 
-  .card-portrait { overflow: hidden; }
+  .card-portrait {
+    overflow: hidden;
+  }
 
   .portrait-image {
     display: block;
@@ -302,35 +319,37 @@
   .hearts {
     position: absolute;
     left: 50%;
-    bottom: .20cm;
+    bottom: 0.2cm;
     z-index: 3;
     display: grid;
     justify-items: center;
     align-items: center;
-    padding: .08cm .14cm;
+    padding: 0.08cm 0.14cm;
     border: 2.4px solid #120b08;
-    border-radius: .22cm;
+    border-radius: 0.22cm;
     background: rgb(18 10 8 / 82%);
-    box-shadow: 0 2px 6px rgb(0 0 0 / 45%), inset 0 0 0 1px rgb(255 255 255 / 8%);
+    box-shadow:
+      0 2px 6px rgb(0 0 0 / 45%),
+      inset 0 0 0 1px rgb(255 255 255 / 8%);
     transform: translateX(-50%);
 
     &.is-foot {
       grid-template-columns: repeat(3, auto);
-      gap: .10cm;
+      gap: 0.1cm;
     }
 
     &.is-mounted {
       grid-template-columns: repeat(3, auto);
       grid-template-rows: repeat(2, auto);
-      gap: .07cm .09cm;
-      padding: .08cm .12cm;
+      gap: 0.07cm 0.09cm;
+      padding: 0.08cm 0.12cm;
     }
   }
 
   .heart {
     display: block;
-    width: .64cm;
-    height: .58cm;
+    width: 0.64cm;
+    height: 0.58cm;
 
     svg {
       display: block;
@@ -354,29 +373,66 @@
     width: 100%;
     align-items: flex-start;
 
-    .unit-card { box-shadow: none; }
+    .unit-card {
+      box-shadow: none;
+    }
   }
 
   .is-poker {
-    .card-grid { border-radius: .15cm; }
-    .card-info { padding: .20cm .22cm .18cm .26cm; }
-    .name-row { margin-bottom: .06cm; }
-    .name-label { font-size: .23cm; }
-    .name-value { min-height: .32cm; font-size: .30cm; }
-    .equipment-list { height: calc(100% - .40cm); row-gap: .07cm; }
-    .field-header { margin-bottom: .035cm; font-size: .25cm; }
-    .field-body { font-size: .195cm; line-height: 1.10; }
-    .field-item strong { font-size: .21cm; }
-    .write-line-wrap { margin-top: .11cm; }
-    .write-line { height: .23cm; }
-
-    .hearts {
-      bottom: .18cm;
-      &.is-foot { gap: .08cm; padding: .06cm .10cm; }
-      &.is-mounted { gap: .05cm .07cm; padding: .06cm .09cm; }
+    .card-grid {
+      border-radius: 0.15cm;
+    }
+    .card-info {
+      padding: 0.2cm 0.22cm 0.18cm 0.26cm;
+    }
+    .name-row {
+      margin-bottom: 0.06cm;
+    }
+    .name-label {
+      font-size: 0.23cm;
+    }
+    .name-value {
+      min-height: 0.32cm;
+      font-size: 0.3cm;
+    }
+    .equipment-list {
+      height: calc(100% - 0.4cm);
+      row-gap: 0.07cm;
+    }
+    .field-header {
+      margin-bottom: 0.035cm;
+      font-size: 0.25cm;
+    }
+    .field-body {
+      font-size: 0.195cm;
+      line-height: 1.1;
+    }
+    .field-item strong {
+      font-size: 0.21cm;
+    }
+    .write-line-wrap {
+      margin-top: 0.11cm;
+    }
+    .write-line {
+      height: 0.23cm;
     }
 
-    .heart { width: .50cm; height: .45cm; }
+    .hearts {
+      bottom: 0.18cm;
+      &.is-foot {
+        gap: 0.08cm;
+        padding: 0.06cm 0.1cm;
+      }
+      &.is-mounted {
+        gap: 0.05cm 0.07cm;
+        padding: 0.06cm 0.09cm;
+      }
+    }
+
+    .heart {
+      width: 0.5cm;
+      height: 0.45cm;
+    }
   }
 }
 
@@ -396,7 +452,9 @@
 }
 
 @media print {
-  body { background: #fff; }
+  body {
+    background: #fff;
+  }
 
   .greathelm-route {
     display: block;
@@ -418,7 +476,7 @@
     .print-sheet {
       display: flex;
       flex-wrap: wrap;
-      gap: .15cm;
+      gap: 0.15cm;
       padding: 0;
     }
 

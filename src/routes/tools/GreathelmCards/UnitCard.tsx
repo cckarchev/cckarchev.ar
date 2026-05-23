@@ -1,11 +1,6 @@
 import type { Ref } from 'react'
 import type { CardData, Item } from './types'
-import {
-  getArmorRows,
-  getHeartCount,
-  getItemRows,
-  getWeaponRows,
-} from './card-logic'
+import { getArmorRows, getHeartCount, getItemRows, getWeaponRows } from './card-logic'
 
 type Props = {
   data: CardData
@@ -43,9 +38,7 @@ export default function UnitCard({ data, portraitUrl, ref }: Props) {
             <div className="portrait-placeholder">Upload a model image</div>
           )}
           {heartCount > 0 && (
-            <div
-              className={`hearts ${data.unitType === 'mounted' ? 'is-mounted' : 'is-foot'}`}
-            >
+            <div className={`hearts ${data.unitType === 'mounted' ? 'is-mounted' : 'is-foot'}`}>
               {Array.from({ length: heartCount }, (_, i) => (
                 <Heart key={i} />
               ))}
@@ -65,8 +58,7 @@ function Field({ header, rows }: { header: string; rows: Item[] }) {
         {rows.length > 0 ? (
           rows.map((item) => (
             <div key={item.id} className="field-item">
-              <strong>{item.name}:</strong>{' '}
-              <span className="rule-text">{item.rules}</span>
+              <strong>{item.name}:</strong> <span className="rule-text">{item.rules}</span>
             </div>
           ))
         ) : (

@@ -15,12 +15,19 @@
   --w-paper-ink: #201a12;
 
   color: var(--w-ink);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Georgia, 'Times New Roman', serif;
   min-height: 100vh;
   min-width: 0;
 
-  * { box-sizing: border-box; }
-  h1, h2, h3 { margin: 0; line-height: 1.15; }
+  * {
+    box-sizing: border-box;
+  }
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    line-height: 1.15;
+  }
 
   header {
     padding: 26px 30px 14px;
@@ -34,7 +41,9 @@
       letter-spacing: 0.09em;
       text-transform: uppercase;
       color: #f8e7a8;
-      text-shadow: 0 3px 0 #000, 0 0 16px rgba(180, 35, 20, 0.55);
+      text-shadow:
+        0 3px 0 #000,
+        0 0 16px rgba(180, 35, 20, 0.55);
     }
 
     .subtitle {
@@ -59,10 +68,13 @@
   }
 
   .panel {
-    background: linear-gradient(180deg, rgba(255, 228, 160, 0.07), rgba(0, 0, 0, 0.08)), var(--w-panel);
+    background:
+      linear-gradient(180deg, rgba(255, 228, 160, 0.07), rgba(0, 0, 0, 0.08)), var(--w-panel);
     border: 1px solid var(--w-line);
     border-radius: 18px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.36), inset 0 0 0 1px rgba(255, 220, 140, 0.08);
+    box-shadow:
+      0 12px 30px rgba(0, 0, 0, 0.36),
+      inset 0 0 0 1px rgba(255, 220, 140, 0.08);
     overflow: hidden;
     min-width: 0;
   }
@@ -88,7 +100,9 @@
     }
   }
 
-  .panel-body { padding: 16px 18px; }
+  .panel-body {
+    padding: 16px 18px;
+  }
 
   label {
     display: block;
@@ -98,7 +112,9 @@
     font-size: 14px;
   }
 
-  select, input[type="number"], input[type="text"] {
+  select,
+  input[type='number'],
+  input[type='text'] {
     width: 100%;
     max-width: 100%;
     padding: 10px 11px;
@@ -126,7 +142,10 @@
     font-size: 13px;
     line-height: 1.35;
 
-    input { margin-top: 2px; flex: 0 0 auto; }
+    input {
+      margin-top: 2px;
+      flex: 0 0 auto;
+    }
   }
 
   button {
@@ -137,17 +156,32 @@
     cursor: pointer;
     color: #17130d;
     background: linear-gradient(#f4d98e, #b98228);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.38), 0 4px 12px rgba(0, 0, 0, 0.28);
-    transition: transform 0.08s ease, filter 0.2s ease;
-    font-family: Georgia, "Times New Roman", serif;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.38),
+      0 4px 12px rgba(0, 0, 0, 0.28);
+    transition:
+      transform 0.08s ease,
+      filter 0.2s ease;
+    font-family: Georgia, 'Times New Roman', serif;
     width: 100%;
 
-    &:hover { filter: brightness(1.06); }
-    &:active { transform: translateY(1px); }
-    &:disabled { opacity: 0.6; cursor: not-allowed; }
+    &:hover {
+      filter: brightness(1.06);
+    }
+    &:active {
+      transform: translateY(1px);
+    }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
-    &.secondary { background: linear-gradient(#d7d1c1, #918b7e); }
-    &.danger { background: linear-gradient(#e99a78, #bd5739); }
+    &.secondary {
+      background: linear-gradient(#d7d1c1, #918b7e);
+    }
+    &.danger {
+      background: linear-gradient(#e99a78, #bd5739);
+    }
   }
 
   .button-grid {
@@ -285,7 +319,7 @@
     margin-top: 10px;
     padding: 10px 12px;
     border-radius: 12px;
-    background: rgba(128, 81, 33, 0.10);
+    background: rgba(128, 81, 33, 0.1);
     border: 1px solid #c7ae7b;
     font-size: 12px;
     line-height: 1.4;
@@ -318,12 +352,18 @@
 }
 
 @media (max-width: 1200px) {
-  .warmaster-route main { grid-template-columns: 320px minmax(0, 1fr); }
-  .warmaster-route .map-body { grid-template-columns: 1fr; }
+  .warmaster-route main {
+    grid-template-columns: 320px minmax(0, 1fr);
+  }
+  .warmaster-route .map-body {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 900px) {
-  .warmaster-route header { padding: 20px 16px 12px; }
+  .warmaster-route header {
+    padding: 20px 16px 12px;
+  }
   .warmaster-route main {
     grid-template-columns: 1fr;
     padding: 12px;
@@ -333,45 +373,83 @@
     max-height: none;
     overflow: visible;
   }
-  .warmaster-route .panel-body { padding: 14px; }
-  .warmaster-route .map-body { grid-template-columns: 1fr; padding: 10px; }
+  .warmaster-route .panel-body {
+    padding: 14px;
+  }
+  .warmaster-route .map-body {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
   .warmaster-route .map-card-header {
     flex-direction: column;
     gap: 8px;
   }
-  .warmaster-route .map-meta { text-align: left; }
-  .warmaster-route .legend-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .warmaster-route .map-meta {
+    text-align: left;
+  }
+  .warmaster-route .legend-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
-  .warmaster-route h1 { font-size: 26px; }
-  .warmaster-route .subtitle { font-size: 13px; }
-  .warmaster-route main { padding: 8px; gap: 10px; }
+  .warmaster-route h1 {
+    font-size: 26px;
+  }
+  .warmaster-route .subtitle {
+    font-size: 13px;
+  }
+  .warmaster-route main {
+    padding: 8px;
+    gap: 10px;
+  }
   .warmaster-route .panel,
-  .warmaster-route .map-card { border-radius: 12px; }
+  .warmaster-route .map-card {
+    border-radius: 12px;
+  }
   .warmaster-route .row,
-  .warmaster-route .button-grid { grid-template-columns: 1fr; }
-  .warmaster-route label { margin-top: 10px; }
+  .warmaster-route .button-grid {
+    grid-template-columns: 1fr;
+  }
+  .warmaster-route label {
+    margin-top: 10px;
+  }
   .warmaster-route select,
-  .warmaster-route input[type="number"],
-  .warmaster-route input[type="text"],
+  .warmaster-route input[type='number'],
+  .warmaster-route input[type='text'],
   .warmaster-route button {
     min-height: 44px;
     font-size: 15px;
   }
-  .warmaster-route .checkbox-row { font-size: 12px; }
-  .warmaster-route .map-card-header { padding: 10px 12px; }
-  .warmaster-route .svg-shell { padding: 6px; }
-  .warmaster-route .svg-shell svg { min-width: 560px; }
-  .warmaster-route .legend-list { grid-template-columns: 1fr; }
-  .warmaster-route .terrain-item { font-size: 11px; }
-  .warmaster-route .scenario-note { font-size: 11px; }
+  .warmaster-route .checkbox-row {
+    font-size: 12px;
+  }
+  .warmaster-route .map-card-header {
+    padding: 10px 12px;
+  }
+  .warmaster-route .svg-shell {
+    padding: 6px;
+  }
+  .warmaster-route .svg-shell svg {
+    min-width: 560px;
+  }
+  .warmaster-route .legend-list {
+    grid-template-columns: 1fr;
+  }
+  .warmaster-route .terrain-item {
+    font-size: 11px;
+  }
+  .warmaster-route .scenario-note {
+    font-size: 11px;
+  }
 }
 
 @media (max-width: 420px) {
-  .warmaster-route .svg-shell svg { min-width: 620px; }
+  .warmaster-route .svg-shell svg {
+    min-width: 620px;
+  }
   .warmaster-route .svg-shell::before {
-    content: "Scroll map sideways to inspect details";
+    content: 'Scroll map sideways to inspect details';
     display: block;
     color: #5f4527;
     font-size: 11px;
@@ -380,11 +458,28 @@
 }
 
 @media print {
-  body { background: white; color: black; }
+  body {
+    background: white;
+    color: black;
+  }
   .warmaster-route header,
-  .warmaster-route .controls { display: none !important; }
-  .warmaster-route main { display: block; padding: 0; max-width: none; }
-  .warmaster-route .map-card { page-break-inside: avoid; box-shadow: none; border-radius: 0; }
-  .warmaster-route .svg-shell { overflow: visible; }
-  .warmaster-route .svg-shell svg { min-width: 0; }
+  .warmaster-route .controls {
+    display: none !important;
+  }
+  .warmaster-route main {
+    display: block;
+    padding: 0;
+    max-width: none;
+  }
+  .warmaster-route .map-card {
+    page-break-inside: avoid;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  .warmaster-route .svg-shell {
+    overflow: visible;
+  }
+  .warmaster-route .svg-shell svg {
+    min-width: 0;
+  }
 }

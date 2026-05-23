@@ -1,13 +1,7 @@
 import type { ChangeEvent } from 'react'
 import { catalog } from './equipment'
 import { getLoadout } from './card-logic'
-import type {
-  CardData,
-  CardSize,
-  LoadoutKind,
-  SelectionKey,
-  UnitType,
-} from './types'
+import type { CardData, CardSize, LoadoutKind, SelectionKey, UnitType } from './types'
 
 type Props = {
   data: CardData
@@ -20,7 +14,7 @@ type Props = {
   exporting?: boolean
 }
 
-const LOADOUT_OPTIONS: Array<{ value: LoadoutKind; label: string }> = [
+const LOADOUT_OPTIONS: { value: LoadoutKind; label: string }[] = [
   { value: 'one-free', label: 'One hand weapon + free hand' },
   { value: 'one-shield', label: 'One hand weapon + shield' },
   { value: 'two-handed', label: 'One two-handed weapon' },
@@ -28,12 +22,12 @@ const LOADOUT_OPTIONS: Array<{ value: LoadoutKind; label: string }> = [
   { value: 'dual-different', label: 'Two different one hand weapons' },
 ]
 
-const UNIT_TYPE_OPTIONS: Array<{ value: UnitType; label: string }> = [
+const UNIT_TYPE_OPTIONS: { value: UnitType; label: string }[] = [
   { value: 'foot', label: 'On foot — 3 hearts' },
   { value: 'mounted', label: 'Mounted — 6 hearts' },
 ]
 
-const CARD_SIZE_OPTIONS: Array<{ value: CardSize; label: string }> = [
+const CARD_SIZE_OPTIONS: { value: CardSize; label: string }[] = [
   { value: 'tarot', label: 'Tarot — 12 cm × 7 cm' },
   { value: 'poker', label: 'Poker — 8.89 cm × 6.35 cm' },
 ]
@@ -51,13 +45,11 @@ export default function ControlsForm({
   const loadout = getLoadout(data)
   const usesShield = data.loadout === 'one-shield'
   const usesSecondWeapon = data.loadout === 'dual-different'
-  const weaponOptions =
-    data.loadout === 'two-handed' ? catalog.twoHanded : catalog.oneHanded
+  const weaponOptions = data.loadout === 'two-handed' ? catalog.twoHanded : catalog.oneHanded
 
   const handleLoadoutChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newLoadout = e.target.value as LoadoutKind
-    const nextOptions =
-      newLoadout === 'two-handed' ? catalog.twoHanded : catalog.oneHanded
+    const nextOptions = newLoadout === 'two-handed' ? catalog.twoHanded : catalog.oneHanded
     const weaponAStillValid = nextOptions.some((item) => item.id === data.weaponA)
     onChange({
       loadout: newLoadout,

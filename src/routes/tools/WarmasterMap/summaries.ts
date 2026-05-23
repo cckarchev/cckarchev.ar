@@ -12,8 +12,12 @@ export function fairPlaySummary(map: GeneratedMap): string {
     competitive: 'competitive semi-symmetry',
     narrative: 'narrative scenery',
   }
-  const water = map.items.some((i) => isWater(i.type)) ? 'water has marked crossings' : 'no major water barrier'
-  const roads = map.items.some((i) => i.type === 'road') ? 'subtle functional road' : 'no road advantage'
+  const water = map.items.some((i) => isWater(i.type))
+    ? 'water has marked crossings'
+    : 'no major water barrier'
+  const roads = map.items.some((i) => i.type === 'road')
+    ? 'subtle functional road'
+    : 'no road advantage'
   const comp =
     map.playStyle === 'competitive'
       ? 'paired terrain is intentionally close but not identical'
@@ -55,7 +59,8 @@ function sideScore(map: GeneratedMap, side: 'north' | 'south'): { total: number;
   for (const item of map.items) {
     const cy = item.path && item.path.length ? pointOnRoad(item, 0.5).y : item.y + item.h / 2
     if (cy < bandMin || cy > bandMax) continue
-    if (['wood', 'denseForest', 'village', 'ruin'].includes(item.type)) add(1.2, 'defended/dense ground')
+    if (['wood', 'denseForest', 'village', 'ruin'].includes(item.type))
+      add(1.2, 'defended/dense ground')
     else if (item.type === 'hill') add(1.0, 'hill positions')
     else if (item.type === 'rough' || item.type === 'marsh') add(0.7, 'charge-breaking terrain')
     else if (item.type === 'obstacle') add(0.55, 'linear defenses')

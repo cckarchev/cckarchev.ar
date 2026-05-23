@@ -28,7 +28,12 @@ function deploymentDepth(table: TableSize): number {
   return Math.max(10, Math.floor((table.h - 60) / 2))
 }
 
-function terrainCount(table: TableSize, density: Density, mission: MissionKey, playStyle: PlayStyle): number {
+function terrainCount(
+  table: TableSize,
+  density: Density,
+  mission: MissionKey,
+  playStyle: PlayStyle,
+): number {
   const area = table.w * table.h
   let base = Math.round((area / (180 * 120)) * 9)
   if (density === 'light') base -= 2
@@ -44,13 +49,19 @@ function terrainSize(type: TerrainType, table: TableSize, rng: Rng): { w: number
   const baseW = randBetween(rng, 14, 26) * scale
   const baseH = randBetween(rng, 8, 18) * scale
   if (type === 'river' || type === 'stream') {
-    return { w: table.w + 8, h: type === 'river' ? randBetween(rng, 4.5, 7) : randBetween(rng, 2.5, 4.5) }
+    return {
+      w: table.w + 8,
+      h: type === 'river' ? randBetween(rng, 4.5, 7) : randBetween(rng, 2.5, 4.5),
+    }
   }
-  if (type === 'road') return { w: table.w * randBetween(rng, 0.75, 1.15), h: randBetween(rng, 2.5, 5) }
+  if (type === 'road')
+    return { w: table.w * randBetween(rng, 0.75, 1.15), h: randBetween(rng, 2.5, 5) }
   if (type === 'crossing') return { w: 10, h: 5 }
-  if (type === 'lake') return { w: randBetween(rng, 18, 34) * scale, h: randBetween(rng, 12, 24) * scale }
+  if (type === 'lake')
+    return { w: randBetween(rng, 18, 34) * scale, h: randBetween(rng, 12, 24) * scale }
   if (type === 'obstacle') return { w: randBetween(rng, 18, 34) * scale, h: 1.5 }
-  if (type === 'village') return { w: randBetween(rng, 18, 30) * scale, h: randBetween(rng, 14, 24) * scale }
+  if (type === 'village')
+    return { w: randBetween(rng, 18, 30) * scale, h: randBetween(rng, 14, 24) * scale }
   if (type === 'tower') return { w: 7 * scale, h: 7 * scale }
   if (type === 'fortress') return { w: table.w, h: 7 }
   return { w: baseW, h: baseH }
@@ -143,7 +154,7 @@ export function makeBlobPath(x: number, y: number, w: number, h: number, rng: Rn
   for (let i = 0; i < count; i++) {
     const a = (Math.PI * 2 * i) / count
     const r = 0.82 + rng() * 0.35
-    pts.push([x + w / 2 + (Math.cos(a) * w) / 2 * r, y + h / 2 + (Math.sin(a) * h) / 2 * r])
+    pts.push([x + w / 2 + ((Math.cos(a) * w) / 2) * r, y + h / 2 + ((Math.sin(a) * h) / 2) * r])
   }
   return 'M ' + pts.map((p) => p.map((n) => n.toFixed(2)).join(' ')).join(' L ') + ' Z'
 }
@@ -188,7 +199,12 @@ function labelFor(type: TerrainType, items: TerrainItem[], offset = 0): string {
 
 // ---- road / water builders ----
 
-function chooseRoadAnchor(items: TerrainItem[], _table: TableSize, rng: Rng, mode: string): Point | null {
+function chooseRoadAnchor(
+  items: TerrainItem[],
+  _table: TableSize,
+  rng: Rng,
+  mode: string,
+): Point | null {
   const candidates = items
     .filter((i) => ['village', 'ruin', 'tower', 'crossing', 'objective'].includes(i.type))
     .map((i) => ({ x: i.x + i.w / 2, y: i.y + i.h / 2 }))
@@ -229,11 +245,20 @@ function makeRoad(
       p0 = { x: -3, y: sideY }
       p3 = { x: table.w + 3, y: randBetween(rng, dep + 8, table.h - dep - 8) }
     } else if (roll < 0.7) {
-      p0 = { x: randBetween(rng, table.w * 0.12, table.w * 0.35), y: randBetween(rng, dep + 10, table.h - dep - 10) }
-      p3 = { x: randBetween(rng, table.w * 0.65, table.w * 0.88), y: randBetween(rng, dep + 10, table.h - dep - 10) }
+      p0 = {
+        x: randBetween(rng, table.w * 0.12, table.w * 0.35),
+        y: randBetween(rng, dep + 10, table.h - dep - 10),
+      }
+      p3 = {
+        x: randBetween(rng, table.w * 0.65, table.w * 0.88),
+        y: randBetween(rng, dep + 10, table.h - dep - 10),
+      }
     } else {
       p0 = { x: -3, y: sideY }
-      p3 = { x: randBetween(rng, table.w * 0.55, table.w * 0.86), y: randBetween(rng, dep + 10, table.h - dep - 10) }
+      p3 = {
+        x: randBetween(rng, table.w * 0.55, table.w * 0.86),
+        y: randBetween(rng, dep + 10, table.h - dep - 10),
+      }
     }
   }
 
@@ -308,16 +333,37 @@ function makeWaterCourse(
   }
 }
 
-function addWaterCrossings(items: TerrainItem[], water: TerrainItem, table: TableSize, rng: Rng): void {
+function addWaterCrossings(
+  items: TerrainItem[],
+  water: TerrainItem,
+  table: TableSize,
+  rng: Rng,
+): void {
   const length = water.waterPath === 'vertical' ? table.h : table.w
   const crossings = Math.max(1, Math.min(4, Math.floor(length / 70)))
   for (let i = 0; i < crossings; i++) {
     const t = (i + 1) / (crossings + 1)
     const p = pointOnRoad(water, Math.max(0.12, Math.min(0.88, t + randBetween(rng, -0.04, 0.04))))
     if (water.waterPath === 'vertical') {
-      items.push({ type: 'crossing', x: p.x - 7, y: p.y - 2.5, w: 14, h: 5, angle: 90, label: `C${i + 1}` })
+      items.push({
+        type: 'crossing',
+        x: p.x - 7,
+        y: p.y - 2.5,
+        w: 14,
+        h: 5,
+        angle: 90,
+        label: `C${i + 1}`,
+      })
     } else {
-      items.push({ type: 'crossing', x: p.x - 6, y: p.y - 2.5, w: 12, h: 5, angle: 0, label: `C${i + 1}` })
+      items.push({
+        type: 'crossing',
+        x: p.x - 6,
+        y: p.y - 2.5,
+        w: 12,
+        h: 5,
+        angle: 0,
+        label: `C${i + 1}`,
+      })
     }
   }
 }
@@ -341,7 +387,8 @@ function makeObstacleCluster(
   const base = randBetween(rng, 12, 22) * Math.sqrt((table.w * table.h) / (180 * 120))
   const thickness = 1.2
   const segments: ObstacleSegment[] = []
-  const addSeg = (x1: number, y1: number, x2: number, y2: number) => segments.push({ x1, y1, x2, y2 })
+  const addSeg = (x1: number, y1: number, x2: number, y2: number) =>
+    segments.push({ x1, y1, x2, y2 })
 
   if (pattern === 'straight') {
     const horizontal = rng() > 0.35
@@ -403,7 +450,14 @@ function addMissionRequired(
   if (mission === 'village') {
     const vW = Math.min(34, table.w * 0.24),
       vH = Math.min(24, table.h * 0.22)
-    items.push({ type: 'village', x: table.w / 2 - vW / 2, y: table.h / 2 - vH / 2, w: vW, h: vH, label: 'V1' })
+    items.push({
+      type: 'village',
+      x: table.w / 2 - vW / 2,
+      y: table.h / 2 - vH / 2,
+      w: vW,
+      h: vH,
+      label: 'V1',
+    })
     items.push(makeRoad(table, rng, dep, items, 'village'))
   }
 
@@ -419,7 +473,14 @@ function addMissionRequired(
 
   if (mission === 'breach') {
     items.push({ type: 'fortress', x: 0, y: table.h - 8, w: table.w, h: 8, label: 'FW1' })
-    items.push({ type: 'objective', x: table.w / 2 - 5, y: table.h - 8.5, w: 10, h: 9, label: 'BR1' })
+    items.push({
+      type: 'objective',
+      x: table.w / 2 - 5,
+      y: table.h - 8.5,
+      w: 10,
+      h: 9,
+      label: 'BR1',
+    })
     items.push(makeRoad(table, rng, dep, items, 'approach'))
   }
 }
@@ -456,8 +517,9 @@ function addFairTerrain(
   let guard = 0
 
   while (
-    items.filter((i) => !['objective', 'tower', 'wagon', 'road', 'fortress', 'crossing'].includes(i.type))
-      .length < target &&
+    items.filter(
+      (i) => !['objective', 'tower', 'wagon', 'road', 'fortress', 'crossing'].includes(i.type),
+    ).length < target &&
     guard < 900
   ) {
     guard++
@@ -485,7 +547,8 @@ function addFairTerrain(
       if (density === 'dense') waterChance += 0.06
       if (rng() > Math.max(0.02, waterChance)) continue
       const water = makeWaterCourse(type, table, rng, dep, items)
-      if (addItem(items, water, table, mission, fairMode, dep)) addWaterCrossings(items, water, table, rng)
+      if (addItem(items, water, table, mission, fairMode, dep))
+        addWaterCrossings(items, water, table, rng)
       continue
     }
 
@@ -499,7 +562,8 @@ function addFairTerrain(
     let x = randBetween(rng, 6, table.w - size.w - 6)
     let y = randBetween(rng, dep + 4, table.h - dep - size.h - 4)
 
-    const mirrorChance = playStyle === 'competitive' ? 0.68 : playStyle === 'narrative' ? 0.32 : 0.52
+    const mirrorChance =
+      playStyle === 'competitive' ? 0.68 : playStyle === 'narrative' ? 0.32 : 0.52
     if (fairMode && rng() < mirrorChance && type !== 'lake') {
       x = randBetween(rng, 8, table.w / 2 - size.w - 4)
       y = randBetween(rng, dep + 5, table.h - dep - size.h - 5)
@@ -553,7 +617,12 @@ function addFairTerrain(
   ensureManeuverLanes(items, table, mission, dep)
 }
 
-function ensureManeuverLanes(items: TerrainItem[], table: TableSize, mission: MissionKey, dep: number): void {
+function ensureManeuverLanes(
+  items: TerrainItem[],
+  table: TableSize,
+  mission: MissionKey,
+  dep: number,
+): void {
   if (mission === 'breach' || mission === 'watchtower') return
   const lanes = [table.w * 0.25, table.w * 0.5, table.w * 0.75]
   for (const lx of lanes) {
@@ -586,7 +655,7 @@ function addMissionObjectives(
     const zoneB = 15
     const topZoneY = dep + Math.max(5, (centralY - zoneB - dep) / 2)
     const bottomZoneY = table.h - dep - Math.max(5, (centralY - zoneB - dep) / 2)
-    const desired: Array<{ x: number; y: number; label: string; zone: 'A' | 'B' }> = [
+    const desired: { x: number; y: number; label: string; zone: 'A' | 'B' }[] = [
       { x: table.w * 0.28, y: centralY - Math.min(6, zoneB * 0.4), label: 'O1', zone: 'B' },
       { x: table.w * 0.72, y: centralY + Math.min(6, zoneB * 0.4), label: 'O2', zone: 'B' },
       { x: table.w * 0.5, y: topZoneY, label: 'O3', zone: 'A' },
@@ -633,9 +702,13 @@ function placeObjectiveStrict(
     candidates.find((obj) => {
       const cy = obj.y + obj.h / 2
       if (desired.zone === 'B' && Math.abs(cy - table.h / 2) > 15) return false
-      if (desired.zone === 'A' && (cy <= dep || cy >= table.h - dep || Math.abs(cy - table.h / 2) <= 15))
+      if (
+        desired.zone === 'A' &&
+        (cy <= dep || cy >= table.h - dep || Math.abs(cy - table.h / 2) <= 15)
+      )
         return false
-      if (obj.x < 5 || obj.y < dep + 1 || obj.x > table.w - 5 || obj.y > table.h - dep - 1) return false
+      if (obj.x < 5 || obj.y < dep + 1 || obj.x > table.w - 5 || obj.y > table.h - dep - 1)
+        return false
       if (objectives.some((o) => centerDistance(obj, o) < minObjectiveGap)) return false
       if (
         items.some(
@@ -660,11 +733,20 @@ function placeObjective(
   allowNearTerrain = false,
 ): void {
   const size = 4
-  const obj: TerrainItem = { type: 'objective', x: x - size / 2, y: y - size / 2, w: size, h: size, label }
+  const obj: TerrainItem = {
+    type: 'objective',
+    x: x - size / 2,
+    y: y - size / 2,
+    w: size,
+    h: size,
+    label,
+  }
   for (let attempt = 0; attempt < 60; attempt++) {
     const tooCloseTerrain =
       !allowNearTerrain &&
-      items.some((i) => !['objective', 'road', 'crossing'].includes(i.type) && centerDistance(obj, i) < 8)
+      items.some(
+        (i) => !['objective', 'road', 'crossing'].includes(i.type) && centerDistance(obj, i) < 8,
+      )
     const tooCloseObj = objectives.some((o) => centerDistance(obj, o) < 30)
     if (
       !tooCloseTerrain &&
@@ -684,7 +766,11 @@ function placeObjective(
 
 // ---- entry point ----
 
-export function generateMap(config: GenerationConfig, index: number, baseSeed: string): GeneratedMap {
+export function generateMap(
+  config: GenerationConfig,
+  index: number,
+  baseSeed: string,
+): GeneratedMap {
   const table = parseSize(config.tableSize)
   const themeKey = config.theme
   const missionKey = config.mission
@@ -701,7 +787,18 @@ export function generateMap(config: GenerationConfig, index: number, baseSeed: s
 
   addMissionRequired(items, objectives, table, missionKey, themeKey, rng, dep)
   addThemeRequired(items, table, missionKey, theme, rng, dep)
-  addFairTerrain(items, table, missionKey, theme, density, fairMode, rng, dep, playStyle, waterRarity)
+  addFairTerrain(
+    items,
+    table,
+    missionKey,
+    theme,
+    density,
+    fairMode,
+    rng,
+    dep,
+    playStyle,
+    waterRarity,
+  )
   addMissionObjectives(items, objectives, table, missionKey, rng, dep)
 
   return {

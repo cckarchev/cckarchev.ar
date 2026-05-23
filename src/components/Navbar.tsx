@@ -3,10 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 flex items-center gap-5 px-4 py-2.5 bg-bg border-b border-accent/35 text-ink text-sm">
-      <NavLink
-        to="/"
-        className="font-bold tracking-wider text-accent hover:text-ink no-underline"
-      >
+      <NavLink to="/" className="font-bold tracking-wider text-accent hover:text-ink no-underline">
         CCK
       </NavLink>
       <div className="flex gap-2 ml-auto flex-wrap">

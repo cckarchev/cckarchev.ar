@@ -4,12 +4,7 @@ export type Item = {
   rules: string
 }
 
-export type LoadoutKind =
-  | 'one-free'
-  | 'one-shield'
-  | 'two-handed'
-  | 'dual-same'
-  | 'dual-different'
+export type LoadoutKind = 'one-free' | 'one-shield' | 'two-handed' | 'dual-same' | 'dual-different'
 
 export type UnitType = 'foot' | 'mounted'
 export type CardSize = 'tarot' | 'poker'

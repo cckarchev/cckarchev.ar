@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import Controls from './Controls'
 import MapCard from './MapCard'
 import { generateMap, generateNewBaseSeed } from './map-generator'
@@ -22,11 +22,22 @@ const INITIAL_RENDER_OPTIONS: RenderOptions = {
   showObjectiveOverlay: true,
 }
 
+// Build the initial state once at mount via lazy useState initializers, so the
+// first render already has a seeded config + a generated map. This avoids the
+// useEffect-then-setState pattern (which triggers cascading renders).
+function makeInitialConfig(): GenerationConfig {
+  return { ...INITIAL_CONFIG, seed: generateNewBaseSeed() }
+}
+
+function makeInitialMaps(config: GenerationConfig): GeneratedMap[] {
+  return Array.from({ length: config.mapsCount }, (_, i) => generateMap(config, i + 1, config.seed))
+}
+
 export default function WarmasterMap() {
-  const [config, setConfig] = useState<GenerationConfig>(INITIAL_CONFIG)
+  const [config, setConfig] = useState<GenerationConfig>(makeInitialConfig)
   const [renderOptions, setRenderOptions] = useState<RenderOptions>(INITIAL_RENDER_OPTIONS)
   const [pdfMode, setPdfMode] = useState<PdfMode>('onePage')
-  const [maps, setMaps] = useState<GeneratedMap[]>([])
+  const [maps, setMaps] = useState<GeneratedMap[]>(() => makeInitialMaps(config))
   const [exporting, setExporting] = useState(false)
 
   const mapCardRefs = useRef<(HTMLElement | null)[]>([])
@@ -35,15 +46,6 @@ export default function WarmasterMap() {
   const generate = useCallback((cfg: GenerationConfig, baseSeed: string) => {
     const next = Array.from({ length: cfg.mapsCount }, (_, i) => generateMap(cfg, i + 1, baseSeed))
     setMaps(next)
-  }, [])
-
-  // Initial generation on mount: always uses a fresh seed (matches the original
-  // page's `generateAll(true)` on load).
-  useEffect(() => {
-    const fresh = generateNewBaseSeed()
-    setConfig((prev) => ({ ...prev, seed: fresh }))
-    generate({ ...INITIAL_CONFIG, seed: fresh }, fresh)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleGenerate = useCallback(() => {
@@ -96,7 +98,10 @@ export default function WarmasterMap() {
             useCORS: true,
           })
           const img = canvas.toDataURL('image/jpeg', 0.95)
-          const ratio = Math.min((pageW - margin * 2) / canvas.width, (pageH - margin * 2) / canvas.height)
+          const ratio = Math.min(
+            (pageW - margin * 2) / canvas.width,
+            (pageH - margin * 2) / canvas.height,
+          )
           const w = canvas.width * ratio
           const h = canvas.height * ratio
           pdf.addImage(img, 'JPEG', (pageW - w) / 2, (pageH - h) / 2, w, h)
@@ -136,9 +141,9 @@ export default function WarmasterMap() {
       <header>
         <h1>Warmaster Map Generator</h1>
         <div className="subtitle">
-          Rule-aware 2D battlefield generator for Warmaster Revolution. Generates fair, readable Old World
-          battlefields with clear footprints, mission markers, deployment zones, water crossings, and a
-          printable terrain reference.
+          Rule-aware 2D battlefield generator for Warmaster Revolution. Generates fair, readable Old
+          World battlefields with clear footprints, mission markers, deployment zones, water
+          crossings, and a printable terrain reference.
         </div>
       </header>
 

@@ -77,6 +77,9 @@ export function getHeartCount(data: CardData): number {
 }
 
 export function slugifyName(name: string, fallback = 'greathelm-card'): string {
-  const cleaned = name.trim().replace(/[^a-z0-9_-]+/gi, '-').toLowerCase()
+  const cleaned = name
+    .trim()
+    .replace(/[^a-z0-9_-]+/gi, '-')
+    .toLowerCase()
   return cleaned || fallback
 }

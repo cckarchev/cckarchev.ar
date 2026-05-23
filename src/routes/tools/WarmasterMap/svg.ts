@@ -4,8 +4,9 @@ import { TERRAIN_RULES, THEMES } from './terrain'
 import type { GeneratedMap, RenderOptions, TerrainItem } from './types'
 
 function escapeHtml(str: string): string {
-  return String(str).replace(/[&<>"']/g, (s) =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[s]!,
+  return String(str).replace(
+    /[&<>"']/g,
+    (s) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[s]!,
   )
 }
 
@@ -22,7 +23,7 @@ function text(
   size: number,
   fill: string,
   anchor: 'start' | 'middle' | 'end' = 'middle',
-  weight: string = 'normal',
+  weight = 'normal',
 ): string {
   return `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="${size}" font-family="Georgia, serif" font-weight="${weight}" fill="${fill}" stroke="rgba(0,0,0,.35)" stroke-width=".35" paint-order="stroke">${escapeHtml(content)}</text>`
 }
@@ -72,7 +73,13 @@ function drawObjectiveValidation(
   return out
 }
 
-function drawMissionGuides(map: GeneratedMap, sx: number, sy: number, vbW: number, _vbH: number): string {
+function drawMissionGuides(
+  map: GeneratedMap,
+  sx: number,
+  sy: number,
+  vbW: number,
+  _vbH: number,
+): string {
   const { table, missionKey } = map
   let out = ''
   if (missionKey === 'takeHold') {
@@ -81,7 +88,14 @@ function drawMissionGuides(map: GeneratedMap, sx: number, sy: number, vbW: numbe
   }
   if (missionKey === 'tower' || missionKey === 'watchtower') {
     out += `<circle cx="${(table.w / 2) * sx}" cy="${(table.h / 2) * sy}" r="${20 * sx}" fill="rgba(255,255,255,.13)" stroke="rgba(80,40,20,.5)" stroke-dasharray="9 7"/>`
-    out += text((table.w / 2) * sx, (table.h / 2) * sy - 25 * sx, '20cm clear zone', 13, '#5a371c', 'middle')
+    out += text(
+      (table.w / 2) * sx,
+      (table.h / 2) * sy - 25 * sx,
+      '20cm clear zone',
+      13,
+      '#5a371c',
+      'middle',
+    )
   }
   if (missionKey === 'breach') {
     out += `<rect x="0" y="${(table.h - 20) * sy}" width="${vbW}" height="${20 * sy}" fill="rgba(80,80,80,.12)" stroke="rgba(80,80,80,.55)" stroke-dasharray="8 6"/>`
@@ -90,7 +104,14 @@ function drawMissionGuides(map: GeneratedMap, sx: number, sy: number, vbW: numbe
   return out
 }
 
-function drawItem(item: TerrainItem, map: GeneratedMap, sx: number, sy: number, _vbW: number, _vbH: number): string {
+function drawItem(
+  item: TerrainItem,
+  map: GeneratedMap,
+  sx: number,
+  sy: number,
+  _vbW: number,
+  _vbH: number,
+): string {
   const r = TERRAIN_RULES[item.type]
   const x = item.x * sx,
     y = item.y * sy,
@@ -102,7 +123,19 @@ function drawItem(item: TerrainItem, map: GeneratedMap, sx: number, sy: number, 
   const common = `transform="rotate(${rot} ${cx} ${cy})" filter="url(#shadow-${hash(map.seed)})"`
   let out = ''
 
-  if (['wood', 'denseForest', 'hill', 'rough', 'marsh', 'village', 'ruin', 'impassable', 'lake'].includes(item.type)) {
+  if (
+    [
+      'wood',
+      'denseForest',
+      'hill',
+      'rough',
+      'marsh',
+      'village',
+      'ruin',
+      'impassable',
+      'lake',
+    ].includes(item.type)
+  ) {
     const rng = rngFromSeed(map.seed + item.label)
     const path = makeBlobPath(x, y, w, h, rng)
     out += `<path d="${path}" fill="${r.color}" stroke="rgba(35,25,12,.75)" stroke-width="2" ${common}/>`
@@ -190,7 +223,12 @@ function itemBoundsPx(item: TerrainItem, sx: number, sy: number): Rect {
 }
 
 function rectsOverlap(a: Rect, b: Rect, pad = 0): boolean {
-  return !(a.x + a.w + pad < b.x || b.x + b.w + pad < a.x || a.y + a.h + pad < b.y || b.y + b.h + pad < a.y)
+  return !(
+    a.x + a.w + pad < b.x ||
+    b.x + b.w + pad < a.x ||
+    a.y + a.h + pad < b.y ||
+    b.y + b.h + pad < a.y
+  )
 }
 
 function clampRectToMap(rect: Rect, vbW: number, vbH: number): Rect {
@@ -222,13 +260,25 @@ function labelCandidates(
     { x: anchor.x - w / 2, y: itemBounds.y + itemBounds.h + gap, w, h, leader: true },
     { x: itemBounds.x + itemBounds.w + gap, y: itemBounds.y - h - gap, w, h, leader: true },
     { x: itemBounds.x - w - gap, y: itemBounds.y - h - gap, w, h, leader: true },
-    { x: itemBounds.x + itemBounds.w + gap, y: itemBounds.y + itemBounds.h + gap, w, h, leader: true },
+    {
+      x: itemBounds.x + itemBounds.w + gap,
+      y: itemBounds.y + itemBounds.h + gap,
+      w,
+      h,
+      leader: true,
+    },
     { x: itemBounds.x - w - gap, y: itemBounds.y + itemBounds.h + gap, w, h, leader: true },
   ]
   return positions.map((p) => clampRectToMap(p, vbW, vbH))
 }
 
-function drawReadableLabels(map: GeneratedMap, sx: number, sy: number, vbW: number, vbH: number): string {
+function drawReadableLabels(
+  map: GeneratedMap,
+  sx: number,
+  sy: number,
+  vbW: number,
+  vbH: number,
+): string {
   const occupied: Rect[] = []
   const terrainBounds = map.items.map((item) => ({ item, bounds: itemBoundsPx(item, sx, sy) }))
   const priority: Record<string, number> = {
@@ -253,11 +303,14 @@ function drawReadableLabels(map: GeneratedMap, sx: number, sy: number, vbW: numb
 
     for (const c of candidates) {
       const overlapsLabel = occupied.some((o) => rectsOverlap(c, o, 3))
-      const overlapsTerrain = terrainBounds.some((tb) => tb.item !== item && rectsOverlap(c, tb.bounds, 2))
+      const overlapsTerrain = terrainBounds.some(
+        (tb) => tb.item !== item && rectsOverlap(c, tb.bounds, 2),
+      )
       const dx = c.x + c.w / 2 - anchor.x
       const dy = c.y + c.h / 2 - anchor.y
       const dist = Math.hypot(dx, dy)
-      const score = (overlapsLabel ? 10000 : 0) + (overlapsTerrain ? 4500 : 0) + dist + (c.leader ? 18 : 0)
+      const score =
+        (overlapsLabel ? 10000 : 0) + (overlapsTerrain ? 4500 : 0) + dist + (c.leader ? 18 : 0)
       if (score < bestScore) {
         bestScore = score
         best = c
@@ -266,7 +319,9 @@ function drawReadableLabels(map: GeneratedMap, sx: number, sy: number, vbW: numb
     }
 
     occupied.push(best)
-    const textFill = ['road', 'stream', 'river', 'crossing'].includes(item.type) ? '#1d140c' : '#2a160b'
+    const textFill = ['road', 'stream', 'river', 'crossing'].includes(item.type)
+      ? '#1d140c'
+      : '#2a160b'
     const cx = best.x + best.w / 2
     const cy = best.y + best.h / 2
     if (best.leader) {
@@ -295,7 +350,8 @@ export function buildSvg(map: GeneratedMap, options: RenderOptions): string {
     </defs>`
   let svg = `<svg viewBox="0 0 ${vbW} ${vbH}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Warmaster battlefield map">${defs}`
   svg += `<rect x="0" y="0" width="${vbW}" height="${vbH}" fill="${bg}"/>`
-  if (options.showGrid) svg += `<rect x="0" y="0" width="${vbW}" height="${vbH}" fill="url(#grid-${seedHash})"/>`
+  if (options.showGrid)
+    svg += `<rect x="0" y="0" width="${vbW}" height="${vbH}" fill="url(#grid-${seedHash})"/>`
   svg += drawTenCmNumbers(map, sx, sy, vbW, vbH, options.showGrid)
   svg += `<rect x="0" y="0" width="${vbW}" height="${dep * sy}" fill="rgba(120,70,45,.16)" stroke="rgba(80,40,20,.35)" stroke-dasharray="8 6"/>`
   svg += `<rect x="0" y="${(table.h - dep) * sy}" width="${vbW}" height="${dep * sy}" fill="rgba(120,70,45,.16)" stroke="rgba(80,40,20,.35)" stroke-dasharray="8 6"/>`

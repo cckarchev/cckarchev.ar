@@ -115,7 +115,8 @@ export const TERRAIN_RULES: Record<TerrainType, TerrainRule> = {
     name: 'Wagon / Train Marker',
     color: '#9b6234',
     tags: ['mission', 'road'],
-    rules: 'Mission marker for Wagon Train style scenarios. Place along a clear road or track corridor.',
+    rules:
+      'Mission marker for Wagon Train style scenarios. Place along a clear road or track corridor.',
   },
   fortress: {
     name: 'Fortress Wall / Breach',

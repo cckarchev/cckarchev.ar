@@ -45,12 +45,8 @@ export default function GreathelmCards() {
     scaleWrapperRef.current.style.setProperty('--preview-scale', '1')
     const cardBox = cardRef.current.getBoundingClientRect()
     const availableWidth = Math.max(280, previewAreaRef.current.clientWidth - 24)
-    const preferredScale =
-      window.innerWidth > 1200 ? 1.55 : window.innerWidth > 800 ? 1.25 : 1
-    const scale = Math.max(
-      0.55,
-      Math.min(preferredScale, availableWidth / cardBox.width),
-    )
+    const preferredScale = window.innerWidth > 1200 ? 1.55 : window.innerWidth > 800 ? 1.25 : 1
+    const scale = Math.max(0.55, Math.min(preferredScale, availableWidth / cardBox.width))
 
     scaleWrapperRef.current.style.setProperty('--preview-scale', String(scale))
     previewAreaRef.current.style.minHeight = `${cardBox.height * scale + 44}px`
