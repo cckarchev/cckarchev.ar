@@ -3,11 +3,16 @@ import { randBetween, rngFromSeed } from './prng'
 import { TERRAIN_RULES, THEMES } from './terrain'
 import type { GeneratedMap, RenderOptions, TerrainItem } from './types'
 
+const HTML_ESCAPES: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#039;',
+}
+
 function escapeHtml(str: string): string {
-  return String(str).replace(
-    /[&<>"']/g,
-    (s) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[s]!,
-  )
+  return String(str).replace(/[&<>"']/g, (s) => HTML_ESCAPES[s] ?? s)
 }
 
 function hash(str: string): string {
@@ -150,8 +155,12 @@ function drawItem(
   } else if (['road', 'river', 'stream'].includes(item.type)) {
     const color = r.color
     if (item.path) {
-      const p = item.path.map((pt) => ({ x: pt.x * sx, y: pt.y * sy }))
-      const pathD = `M ${p[0]!.x} ${p[0]!.y} C ${p[1]!.x} ${p[1]!.y}, ${p[2]!.x} ${p[2]!.y}, ${p[3]!.x} ${p[3]!.y}`
+      const [p0, p1, p2, p3] = item.path
+      const sp0 = { x: p0.x * sx, y: p0.y * sy }
+      const sp1 = { x: p1.x * sx, y: p1.y * sy }
+      const sp2 = { x: p2.x * sx, y: p2.y * sy }
+      const sp3 = { x: p3.x * sx, y: p3.y * sy }
+      const pathD = `M ${sp0.x} ${sp0.y} C ${sp1.x} ${sp1.y}, ${sp2.x} ${sp2.y}, ${sp3.x} ${sp3.y}`
       if (item.type === 'road') {
         out += `<path d="${pathD}" fill="none" stroke="${color}" stroke-width="${Math.max(7, 3.5 * sy)}" stroke-linecap="round" opacity=".88"/>`
         out += `<path d="${pathD}" fill="none" stroke="rgba(50,35,20,.38)" stroke-width="1.5" stroke-dasharray="7 7"/>`
@@ -247,12 +256,12 @@ function labelCandidates(
   itemBounds: Rect,
   vbW: number,
   vbH: number,
-): Rect[] {
+): [Rect, ...Rect[]] {
   const w = Math.max(28, label.length * 8.5 + 12)
   const h = 20
   const gap = 8
   const center: Rect = { x: anchor.x - w / 2, y: anchor.y - h / 2, w, h, leader: false }
-  const positions: Rect[] = [
+  const positions: [Rect, ...Rect[]] = [
     center,
     { x: itemBounds.x + itemBounds.w + gap, y: anchor.y - h / 2, w, h, leader: true },
     { x: itemBounds.x - w - gap, y: anchor.y - h / 2, w, h, leader: true },
@@ -269,7 +278,8 @@ function labelCandidates(
     },
     { x: itemBounds.x - w - gap, y: itemBounds.y + itemBounds.h + gap, w, h, leader: true },
   ]
-  return positions.map((p) => clampRectToMap(p, vbW, vbH))
+  const [first, ...rest] = positions
+  return [clampRectToMap(first, vbW, vbH), ...rest.map((p) => clampRectToMap(p, vbW, vbH))]
 }
 
 function drawReadableLabels(
@@ -298,7 +308,7 @@ function drawReadableLabels(
     const anchor = itemAnchor(item, sx, sy)
     const ownBounds = itemBoundsPx(item, sx, sy)
     const candidates = labelCandidates(anchor, item.label, ownBounds, vbW, vbH)
-    let best = candidates[0]!
+    let best: Rect = candidates[0]
     let bestScore = Infinity
 
     for (const c of candidates) {

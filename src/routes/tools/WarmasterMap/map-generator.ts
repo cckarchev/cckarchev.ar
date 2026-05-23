@@ -164,8 +164,8 @@ export function pointOnRoad(road: TerrainItem, t: number): Point {
   const [p0, p1, p2, p3] = road.path
   const u = 1 - t
   return {
-    x: u * u * u * p0!.x + 3 * u * u * t * p1!.x + 3 * u * t * t * p2!.x + t * t * t * p3!.x,
-    y: u * u * u * p0!.y + 3 * u * u * t * p1!.y + 3 * u * t * t * p2!.y + t * t * t * p3!.y,
+    x: u * u * u * p0.x + 3 * u * u * t * p1.x + 3 * u * t * t * p2.x + t * t * t * p3.x,
+    y: u * u * u * p0.y + 3 * u * u * t * p1.y + 3 * u * t * t * p2.y + t * t * t * p3.y,
   }
 }
 
@@ -678,23 +678,24 @@ function placeObjectiveStrict(
   dep: number,
 ): void {
   const size = 4
-  const candidates: TerrainItem[] = []
   const minObjectiveGap = Math.min(30, Math.max(24, table.w * 0.28))
-  const addCandidate = (x: number, y: number) =>
-    candidates.push({
-      x: x - size / 2,
-      y: y - size / 2,
-      w: size,
-      h: size,
-      type: 'objective',
-      label: desired.label,
-    })
-  addCandidate(desired.x, desired.y)
+  const makeCandidate = (x: number, y: number): TerrainItem => ({
+    x: x - size / 2,
+    y: y - size / 2,
+    w: size,
+    h: size,
+    type: 'objective',
+    label: desired.label,
+  })
+  // The desired position is always candidate #1, and it's also the fallback
+  // if no candidate in the surrounding rings satisfies the constraints.
+  const firstCandidate = makeCandidate(desired.x, desired.y)
+  const candidates: TerrainItem[] = [firstCandidate]
   for (let ring = 1; ring <= 5; ring++) {
     const step = ring * 5
     for (const dx of [-step, 0, step]) {
       for (const dy of [-step, 0, step]) {
-        if (dx || dy) addCandidate(desired.x + dx, desired.y + dy)
+        if (dx || dy) candidates.push(makeCandidate(desired.x + dx, desired.y + dy))
       }
     }
   }
@@ -717,7 +718,7 @@ function placeObjectiveStrict(
       )
         return false
       return true
-    }) || candidates[0]!
+    }) ?? firstCandidate
   items.push(legal)
   objectives.push(legal)
 }

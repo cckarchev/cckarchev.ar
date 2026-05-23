@@ -53,7 +53,7 @@ export default function ControlsForm({
     const weaponAStillValid = nextOptions.some((item) => item.id === data.weaponA)
     onChange({
       loadout: newLoadout,
-      weaponA: weaponAStillValid ? data.weaponA : nextOptions[0]!.id,
+      weaponA: weaponAStillValid ? data.weaponA : (nextOptions[0]?.id ?? data.weaponA),
     })
   }
 

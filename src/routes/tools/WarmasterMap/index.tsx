@@ -90,9 +90,9 @@ export default function WarmasterMap() {
       const cards = mapCardRefs.current.filter((el): el is HTMLElement => el !== null)
 
       if (pdfMode === 'separate') {
-        for (let i = 0; i < cards.length; i++) {
+        for (const [i, card] of cards.entries()) {
           if (i > 0) pdf.addPage()
-          const canvas = await html2canvas(cards[i]!, {
+          const canvas = await html2canvas(card, {
             scale: 2,
             backgroundColor: '#f3ead5',
             useCORS: true,
@@ -111,8 +111,8 @@ export default function WarmasterMap() {
         const rows = Math.ceil(cards.length / perRow)
         const cellW = (pageW - margin * 2) / perRow
         const cellH = (pageH - margin * 2) / rows
-        for (let i = 0; i < cards.length; i++) {
-          const canvas = await html2canvas(cards[i]!, {
+        for (const [i, card] of cards.entries()) {
+          const canvas = await html2canvas(card, {
             scale: 1.5,
             backgroundColor: '#f3ead5',
             useCORS: true,

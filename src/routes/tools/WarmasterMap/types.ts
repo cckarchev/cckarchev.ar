@@ -36,6 +36,8 @@ export type PdfMode = 'onePage' | 'separate'
 
 export type Point = { x: number; y: number }
 
+export type BezierPath = [Point, Point, Point, Point]
+
 export type ObstacleSegment = { x1: number; y1: number; x2: number; y2: number }
 
 export type TerrainItem = {
@@ -46,7 +48,8 @@ export type TerrainItem = {
   h: number
   angle?: number
   label?: string
-  path?: Point[]
+  // Bezier control points (start, c1, c2, end) for roads and water courses.
+  path?: BezierPath
   segments?: ObstacleSegment[]
   pattern?: string
   width?: number

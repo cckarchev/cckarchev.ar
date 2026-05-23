@@ -25,12 +25,10 @@ export default tseslint.config(
     },
     rules: {
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      // Non-null assertions are used intentionally for known-safe array access
-      // (e.g. palette[0] when palette is statically non-empty).
-      '@typescript-eslint/no-non-null-assertion': 'off',
-      // Prefer `type` over `interface` for consistency — unions and intersections
-      // come up often, and mixing the two is more confusing than picking one.
-      '@typescript-eslint/consistent-type-definitions': 'off',
+      // Enforce `type` over `interface` for consistency. Many of our object
+      // shapes are unions/intersections that can only be expressed as `type`;
+      // mixing the two for plain shapes adds confusion with no benefit.
+      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       // Leading underscore marks intentionally-unused params (e.g. `_vbW` in
       // SVG helpers that all share a signature for symmetry).
       '@typescript-eslint/no-unused-vars': [

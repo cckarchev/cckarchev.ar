@@ -61,7 +61,8 @@ describe('generateMap', () => {
     const map = generateMap(makeConfig({ mission: 'tower' }), 1, 'tower-test')
     const towers = map.items.filter((i) => i.type === 'tower')
     expect(towers).toHaveLength(1)
-    const t = towers[0]!
+    const t = towers[0]
+    if (!t) return
     expect(t.x + t.w / 2).toBeCloseTo(map.table.w / 2, 1)
     expect(t.y + t.h / 2).toBeCloseTo(map.table.h / 2, 1)
   })

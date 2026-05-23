@@ -35,5 +35,7 @@ export function randBetween(rng: Rng, min: number, max: number): number {
 }
 
 export function choice<T>(rng: Rng, arr: readonly T[]): T {
-  return arr[Math.floor(rng() * arr.length)]!
+  if (arr.length === 0) throw new Error('choice() called with an empty array')
+  // Cast is safe: we just guarded for length > 0.
+  return arr[Math.floor(rng() * arr.length)] as T
 }
