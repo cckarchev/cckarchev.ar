@@ -24,6 +24,7 @@ Across all of the above, do **not** translate domain-specific terms that origina
 │   ├── components/
 │   │   ├── Navbar.tsx           # global site navbar (rendered above all routes)
 │   │   └── ui/                  # shared UI primitives — use these before rolling your own
+│   ├── hooks/                   # shared React hooks (e.g. useDocumentTitle)
 │   ├── routes/
 │   │   ├── Home.tsx
 │   │   └── tools/
@@ -82,6 +83,19 @@ Design tokens (colors, surface shades, gradient stops) live in `src/index.css`'s
 When adding **tool-specific visuals** (card backgrounds, SVG containers, parchment textures, etc.), put them in the tool's `*.css` file with all rules **nested under `.mytool-route`** via CSS nesting (supported natively by Tailwind v4's Lightning CSS). Do not add unscoped class rules — they leak across tools.
 
 Tool-scoped CSS variables should use a **semantic prefix that describes what they represent** (the artifact, not the tool letter), e.g. `--card-ink` and `--card-paper-*` in Greathelm, `--map-paper` and `--map-paper-ink` in Warmaster. Avoid plain `--ink` or `--paper` — they shadow the global `--color-*` tokens and confuse readers. Avoid `--g-*` or `--w-*` letter prefixes too — they're arbitrary and don't convey meaning.
+
+## Responsive design
+
+**This site is mobile-first.** Design and build for small screens first, then layer on larger layouts with `min-width` breakpoints (Tailwind's default mobile-first utilities — base styles target mobile, `sm:`/`md:`/`lg:` prefixes enhance for wider viewports). Never start from a desktop layout and try to cram it into a phone.
+
+**Desktop still matters** — many tools (the Warmaster map, Greathelm card sheets) are genuinely more usable on a large screen, so the wide-viewport experience must be deliberate and polished, not an afterthought. Mobile-first is about the order you build in and the default that ships, not about neglecting desktop.
+
+Practical implications:
+
+- Default styles (no breakpoint prefix) should produce a working, legible single-column layout on a narrow phone.
+- Sidebar/control panels that sit beside content on desktop should stack above or below it on mobile.
+- Touch targets, font sizes, and spacing should be comfortable on a phone without zooming.
+- Test both ends of the range — narrow phone and wide desktop — before considering a layout done.
 
 ## Quality gates
 
