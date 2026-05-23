@@ -3,6 +3,7 @@ import ControlsForm from './ControlsForm'
 import UnitCard from './UnitCard'
 import PrintSheet from './PrintSheet'
 import { slugifyName } from './card-logic'
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle'
 import './greathelm.css'
 import type { CardData, SavedCard, SelectionKey } from './types'
 
@@ -30,6 +31,8 @@ const INITIAL_DATA: CardData = {
 }
 
 export default function GreathelmCards() {
+  useDocumentTitle('Greathelm')
+
   const [data, setData] = useState<CardData>(INITIAL_DATA)
   const [savedCards, setSavedCards] = useState<SavedCard[]>([])
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null)

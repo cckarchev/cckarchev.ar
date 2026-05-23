@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
+import { useDocumentTitle } from '../hooks/useDocumentTitle'
 
 export default function Home() {
+  useDocumentTitle('Centro Cultural Karchev')
+
   return (
     <main className="max-w-4xl mx-auto px-5 pb-16 pt-12">
       <section className="text-center py-8 mb-12 border-b border-accent/20">

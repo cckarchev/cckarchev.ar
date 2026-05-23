@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 import Controls from './Controls'
 import MapCard from './MapCard'
 import { generateMap, generateNewBaseSeed } from './map-generator'
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle'
 import './warmaster.css'
 import type { GeneratedMap, GenerationConfig, PdfMode, RenderOptions } from './types'
 
@@ -34,6 +35,8 @@ function makeInitialMaps(config: GenerationConfig): GeneratedMap[] {
 }
 
 export default function WarmasterMap() {
+  useDocumentTitle('Warmaster')
+
   const [config, setConfig] = useState<GenerationConfig>(makeInitialConfig)
   const [renderOptions, setRenderOptions] = useState<RenderOptions>(INITIAL_RENDER_OPTIONS)
   const [pdfMode, setPdfMode] = useState<PdfMode>('onePage')
