@@ -10,3 +10,7 @@ dist/
 .env
 .env.local
 .env.*.local
+
+# Supabase CLI
+supabase/.branches/
+supabase/.temp/

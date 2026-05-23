@@ -23,19 +23,30 @@ Across all of the above, do **not** translate domain-specific terms that origina
 ├── src/
 │   ├── components/
 │   │   ├── Navbar.tsx           # global site navbar (rendered above all routes)
+│   │   ├── AuthMenu.tsx         # navbar sign-in button / avatar + account popup menu
 │   │   └── ui/                  # shared UI primitives — use these before rolling your own
+│   ├── context/                 # React context providers (e.g. AuthProvider / useAuth)
 │   ├── hooks/                   # shared React hooks (e.g. useDocumentTitle)
+│   ├── lib/
+│   │   └── supabase.ts          # shared Supabase client
 │   ├── routes/
 │   │   ├── Home.tsx
+│   │   ├── Privacy.tsx          # /privacy — privacy policy (required for Google OAuth)
+│   │   ├── Terms.tsx            # /terms — terms of use
 │   │   └── tools/
 │   │       ├── GreathelmCards/  # one folder per tool route
 │   │       └── WarmasterMap/
-│   ├── App.tsx                  # router setup
+│   ├── App.tsx                  # router setup, wrapped in AuthProvider
+│   ├── config.ts               # Supabase URL + publishable key (public, committed)
 │   ├── main.tsx                 # React entry point
 │   ├── index.css                # global styles + Tailwind v4 @theme tokens
 │   └── vite-env.d.ts
+├── supabase/
+│   ├── config.toml              # Supabase CLI project config
+│   └── migrations/              # SQL migrations (timestamped, pushed via pnpm db:push)
 ├── public/                      # static assets served verbatim
 │   └── 404.html                 # SPA fallback for GH Pages
+├── .env.example                 # template for the db:* scripts (SUPABASE_PROJECT_REF, etc.)
 ├── eslint.config.js
 ├── .prettierrc.json
 ├── .husky/                      # pre-commit hook
@@ -64,6 +75,20 @@ src/routes/tools/MyTool/
 4. Add a tool card on the landing page in `src/routes/Home.tsx`.
 5. Write unit tests for the pure logic in `*.test.ts` files next to the modules they test.
 6. Update the docs — `CLAUDE.md` (project-layout tree at minimum) and `README.md` (project-structure section, and the tagline if the tool is significant). See [Keep the docs in sync](#keep-the-docs-in-sync).
+
+## Auth and data (Supabase)
+
+The site is **publicly browsable without signing in** — the tools work for anonymous visitors. Auth is additive: signing in with Google unlocks per-user features as we build them. Don't gate existing tools behind auth.
+
+- **Client**: one shared `supabase` client in `src/lib/supabase.ts`. Import it; never call `createClient` elsewhere.
+- **Connection details**: `src/config.ts` holds `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (the new `sb_publishable_…` key, not the legacy anon JWT). These are **committed on purpose** — the publishable key is a public client key whose only power is what Row Level Security grants. Do **not** move them to env vars or treat them as secrets. (Secrets like the DB password live in `.env`, used only by the `db:*` scripts, and are gitignored.)
+- **Session access**: `AuthProvider` (in `src/context/AuthContext.tsx`) owns the session and exposes `useAuth()` → `{ session, signIn, signOut }`. The context is split across two files — `authContext.ts` (the `createContext` + `useAuth` hook) and `AuthContext.tsx` (the provider component) — because `eslint-plugin-react-refresh` forbids exporting a component and non-component from the same module. Follow that split for any new context.
+- **Sign-in** is Google OAuth via `supabase.auth.signInWithOAuth`, redirecting back to `window.location.origin`. The navbar's `AuthMenu` renders the sign-in button when signed out and the avatar + account popup (name, email, sign out) when signed in.
+- **Identity ↔ data mapping** is by **email**: `auth.jwt() ->> 'email'`. The `users` table has a unique, nullable `email` so a row can exist before a Google account links to it.
+
+### Migrations
+
+SQL migrations live in `supabase/migrations/`, timestamped (`pnpm db:migration:new <name>` scaffolds one). Apply them to the remote project with `pnpm db:push` after `pnpm db:link` (both read `.env`). **RLS is enabled on every table; access policies are added per-feature, not speculatively** — a new table starts locked (RLS on, no policies) and gains exactly the policies a feature needs. Mirror the security-definer RPC pattern (e.g. for reads that must not expose a restricted column) when a plain policy can't express the rule.
 
 ## Design tokens and primitives
 
@@ -127,6 +152,10 @@ pnpm test:watch     # Watch mode
 pnpm dev            # Vite dev server (port 8000)
 pnpm build          # Production build
 pnpm preview        # Preview the production build locally
+
+pnpm db:link              # Link to the remote Supabase project (run once; reads .env)
+pnpm db:push              # Push pending migrations to the remote
+pnpm db:migration:new foo # Scaffold a new timestamped migration
 ```
 
 ## Testing conventions

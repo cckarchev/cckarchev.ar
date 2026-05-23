@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
+import AuthMenu from './AuthMenu'
 
 export default function Navbar() {
   return (
@@ -6,7 +7,7 @@ export default function Navbar() {
       <NavLink to="/" className="font-bold tracking-wider text-accent hover:text-ink no-underline">
         CCK
       </NavLink>
-      <div className="flex gap-2 ml-auto flex-wrap">
+      <div className="flex gap-2 flex-wrap">
         <Link
           to="/tools/warmaster-map"
           className="text-ink hover:bg-accent/15 hover:text-accent rounded px-2.5 py-1.5 no-underline"
@@ -19,6 +20,9 @@ export default function Navbar() {
         >
           Greathelm Cards
         </Link>
+      </div>
+      <div className="ml-auto">
+        <AuthMenu />
       </div>
     </nav>
   )

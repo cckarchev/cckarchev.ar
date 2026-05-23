@@ -13,6 +13,9 @@
     "typecheck": "tsc -b",
     "test": "vitest run",
     "test:watch": "vitest",
+    "db:link": "set -a && . ./.env && supabase link --project-ref $SUPABASE_PROJECT_REF",
+    "db:push": "set -a && . ./.env && supabase db push",
+    "db:migration:new": "supabase migration new",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -48,6 +51,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.0.5",
     "prettier": "^3.8.3",
+    "supabase": "^2.76.8",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.4",
